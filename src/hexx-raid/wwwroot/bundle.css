@@ -75,17 +75,25 @@ nav {
   .raid .healers-header:before,
   .raid .melee-header:before,
   .raid .ranged-header:before {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAAAQCAMAAACbZSdJAAABa1BMVEX///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8xWP+lAAAAeHRSTlMAAwQGBwgJCgsMDg8QERITFBUWFxkaGxwdHyAhIyQmJyosLS4wMTIzNTk6PT5BREZISkxNUFJTVFdYXF1eX2Zpa2xvcHV3en5/gIOFiImMjY6PkZKTlZqbnJ+goaOkpqeoq62usLGztLa3uMDJzc7Q0tbj5urz9PgG/p8iAAABiUlEQVR42qVSh1LCQBQ8T8QQMIo1BjvSFAXESFHELogUAUFBRYoNe8/nm2vMIM44ozvJvU1u392+dwf+Du1m7aKmPuiNaH/XO12MaZI2RieONYR06HRaOsuRiALBgr9BIw7GppNsVlEChMF5AQXRi8auqGQufXxW7eI+/rvqbywXbc7E6hBHBgTra90C4XjlfYbIAk1GaCajYGwNcusi4e5rAa92KuPP2WTDt9y8J5X7QnbC+KKTEFudx31JMM2uDaUrFGxfLheDuGTJc9NPhN3n3hGo2snSPnbGLT9lTpWPTLjNc1u3PURpqOy42wEYitNM7fawOobUc71TlEf1hF0A6oFYNE2eCUCH3BbMtPYrPQoDaZ6WERO/16lPBE/cACwVwxm0vK/AYf+pDTzbtlzG9o35MGzpLV++7wVg8KGEfUnP+T61yoO3UXZ3qh4A5i6JlebeWjNy2ShV5lNIK6Qd8pOivKzYiwJV8onUXs4AWjO7D2kBUpbdv8UgDgzQ6YLgV7CL8198AQI2S/iv7FMSAAAAAElFTkSuQmCC");
+    background-repeat: no-repeat;
+    content: ' ';
+    display: inline-block;
     font-weight: normal;
+    height: 14px;
     margin-right: 5px;
-    opacity: 0.5; }
+    opacity: 0.5;
+    position: relative;
+    top: 1px;
+    width: 14px; }
   .raid .tanks-header:before {
-    content: '\26c9'; }
+    background-position: 0 -1px; }
   .raid .healers-header:before {
-    content: '\271a'; }
+    background-position: -15px -1px; }
   .raid .melee-header:before {
-    content: '\2694'; }
+    background-position: -28px -1px; }
   .raid .ranged-header:before {
-    content: '\26ed'; }
+    background-position: -42px -1px; }
   .raid .column {
     box-sizing: border-box;
     padding: 0 5px;

@@ -12,12 +12,6 @@ function loadRaids(accessToken) {
 }
 
 function updateRaid(accessToken, raidId, status, note) {
-  console.log(status, note);
-  const body = JSON.stringify({
-    status,
-    note
-  });
-  console.log(body);
   return fetch(`/api/raids/${raidId}`, {
     method: 'POST',
     headers: {
