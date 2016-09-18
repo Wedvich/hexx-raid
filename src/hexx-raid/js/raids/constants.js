@@ -1,0 +1,3 @@
+export const RAID_SIGNUP_STATUS_COMING = 0;
+export const RAID_SIGNUP_STATUS_MAYBE = 1;
+export const RAID_SIGNUP_STATUS_NOT_COMING = 2;
