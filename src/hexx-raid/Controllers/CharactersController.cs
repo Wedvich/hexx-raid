@@ -66,7 +66,7 @@ namespace hexx_raid.Controllers
                 }
 
                 character.Audit.ItemLevel = characterFromBattleNet.Items.AverageItemLevelEquipped;
-                character.Audit.LastUpdated = DateTimeOffset.Now;
+                character.Audit.LastRefreshed = DateTimeOffset.Now;
             }
 
             await _context.SaveChangesAsync();

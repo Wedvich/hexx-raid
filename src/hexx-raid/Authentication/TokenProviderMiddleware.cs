@@ -73,8 +73,17 @@ namespace hexx_raid.Authentication
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+                new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+
+                new Claim(ClaimTypes.Permissions, Permissions.Raids.View)
             };
+
+            if (user.IsRaider)
+            {
+                claims.AddRange(new[] {
+                    new Claim(ClaimTypes.Permissions, Permissions.Raids.Signup)
+                });
+            }
 
             if (user.IsManagement)
             {

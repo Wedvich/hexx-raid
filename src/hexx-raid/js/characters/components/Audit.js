@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { Loader } from '../../utils';
 import AuditRow from './AuditRow';
 import { refreshAuditRequest } from '../actions';
+
+function sortByName(a, b) {
+  return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
+}
 
 class Audit extends Component {
   render() {
@@ -36,7 +40,7 @@ class Audit extends Component {
             </tr>
           </thead>
           <tbody>
-            {characters.map(c => <AuditRow key={i++} {...c} />)}
+            {characters.sort(sortByName).map(c => <AuditRow key={i++} {...c} />)}
           </tbody>
         </table>
       </div>}
