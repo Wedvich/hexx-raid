@@ -28,7 +28,7 @@ export default function RaidSignup(props) {
   }
 
   return <li className={`signup ${classIdToName(props.character.class)}`}>
-    <span className={'spec ' + props.character.primarySpec}></span>
+    <span className={props.character.primarySpec + ' spec'}></span>
     <span>{props.character.name}</span>
     {props.note && <Note {...props.note} />}
     <span className={`indicator ${statusClass}`} title={statusTitle}></span>

@@ -8,9 +8,10 @@ namespace hexx_raid.Model
             : base(options)
         { }
 
-        public DbSet<Raid> Raids { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<CharacterAudit> CharacterAudits { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<Raid> Raids { get; set; }
         public DbSet<RaidSignup> RaidSignups { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -18,19 +19,24 @@ namespace hexx_raid.Model
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Raid>(b =>
-            {
-                b.Property(r => r.RaidId).HasDefaultValueSql("newsequentialid()");
-            });
-
             modelBuilder.Entity<Character>(b =>
             {
                 b.Property(r => r.CharacterId).HasDefaultValueSql("newsequentialid()");
             });
 
+            modelBuilder.Entity<CharacterAudit>(b =>
+            {
+                b.Property(r => r.CharacterAuditId).HasDefaultValueSql("newsequentialid()");
+            });
+
             modelBuilder.Entity<Note>(b =>
             {
                 b.Property(r => r.NoteId).HasDefaultValueSql("newsequentialid()");
+            });
+
+            modelBuilder.Entity<Raid>(b =>
+            {
+                b.Property(r => r.RaidId).HasDefaultValueSql("newsequentialid()");
             });
 
             modelBuilder.Entity<RaidSignup>(b =>

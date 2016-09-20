@@ -1,9 +1,11 @@
+import Audit from './components/Audit';
+import Characters from './components/Characters';
 import reducer from './reducer';
-import page from './page';
+import saga from './saga';
 
 export {
-  page,
-  reducer
+  Audit,
+  Characters,
+  reducer,
+  saga
 };
-
-export default page;

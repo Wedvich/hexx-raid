@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using hexx_raid.Authentication;
+using hexx_raid.BattleNet;
 using hexx_raid.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -53,7 +54,14 @@ namespace hexx_raid
             var dbConnectionString = Configuration.GetConnectionString("HexxDb");
             services.AddTransient(provider => new MySqlConnection(dbConnectionString));
 
+            var battleNetRegion = Configuration.GetValue<string>("BattleNetRegion");
+            var battleNetLocale = Configuration.GetValue<string>("BattleNetLocale");
+            var battleNetApiKey = Configuration.GetValue<string>("BattleNetApiKey");
+            services.AddScoped(p => new BattleNetApi(battleNetRegion, battleNetLocale, battleNetApiKey));
+
             services.AddMvc().AddJsonOptions(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
+
+            services.AddAuthorizationPolicies();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

@@ -150,36 +150,36 @@ nav {
       opacity: 0.3;
     }
   }
+}
 
-  .link-group {
-    display: block;
-    line-height: 1.5em;
+.link-group {
+  display: block;
+  line-height: 1.5em;
 
-    .coming {
-      border-bottom: 0.25em solid $comingColor;
+  .coming {
+    border-bottom: 0.25em solid $comingColor;
+  }
+
+  .maybe {
+    border-bottom: 0.25em solid $maybeColor;
+  }
+
+  .not-coming {
+    border-bottom: 0.25em solid $notComingColor;
+  }
+
+  a {
+    color: $textColor2;
+    text-decoration: none;
+
+    &:hover {
+      border-color: white;
+      color: $textColor;
     }
+  }
 
-    .maybe {
-      border-bottom: 0.25em solid $maybeColor;
-    }
-
-    .not-coming {
-      border-bottom: 0.25em solid $notComingColor;
-    }
-
-    a {
-      color: $textColor2;
-      text-decoration: none;
-
-      &:hover {
-        border-color: white;
-        color: $textColor;
-      }
-    }
-
-    & + .link-group {
-      margin-top: 10px;
-    }
+  & + .link-group {
+    margin-top: 10px;
   }
 }
 
@@ -329,11 +329,14 @@ nav {
 }
 
 .loader {
+  display: inline-block;
+
   & > div {
     background: $textColor2;
     border-radius: 100%;
     display: inline-block;
     height: 15px;
+    line-height: normal;
     margin: 0 2px;
     width: 15px;
     -webkit-animation: loader-animation 1.4s infinite ease-in-out both;
@@ -348,6 +351,11 @@ nav {
       -webkit-animation-delay: -0.16s;
       animation-delay: -0.16s;
     }
+  }
+
+  &.small > div {
+    height: 10px;
+    width: 10px;
   }
 
   @-webkit-keyframes loader-animation {
@@ -374,13 +382,6 @@ nav {
   padding: 5px 5px;
   position: relative;
   text-shadow: none;
-
-  .spec {
-    display: inline-block;
-    height: 24px;
-    margin-right: 5px;
-    width: 24px;
-  }
 
   .indicator {
     color: white;
@@ -515,6 +516,63 @@ nav {
     &:hover {
       color: $textColor;
       text-decoration: underline;
+    }
+  }
+}
+
+.spec {
+  display: inline-block;
+  height: 24px;
+  margin-right: 5px;
+  width: 24px;
+}
+
+.audit-table {
+  background: $backgroundColor;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  margin: 20px 0;
+  padding: 10px;
+
+  .title {
+    span {
+      display: inline-block;
+      margin-right: 0.25em;
+    }
+
+    b, time {
+      font-weight: bold;
+    }
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  table {
+    border-spacing: 2px;
+    margin: 8px -2px -2px -2px;
+    width: 100%;
+  }
+
+  tr {
+    background: $backgroundColor2;
+  }
+
+  th,
+  td {
+    padding: 5px;
+    text-align: left;
+    white-space: nowrap;
+
+    & > span {
+      display: inline-block;
+      height: 24px;
+      line-height: 24px;
+      vertical-align: middle;
+
+      &:last-child {
+        padding-right: 0;
+      }
     }
   }
 }

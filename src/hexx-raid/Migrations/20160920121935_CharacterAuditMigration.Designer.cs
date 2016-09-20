@@ -8,9 +8,10 @@ using hexx_raid.Model;
 namespace hexxraid.Migrations
 {
     [DbContext(typeof(HexxRaidContext))]
-    partial class HexxRaidContextModelSnapshot : ModelSnapshot
+    [Migration("20160920121935_CharacterAuditMigration")]
+    partial class CharacterAuditMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
@@ -48,8 +49,6 @@ namespace hexxraid.Migrations
                         .HasDefaultValueSql("newsequentialid()");
 
                     b.Property<Guid>("CharacterId");
-
-                    b.Property<bool>("IsInPrimarySpec");
 
                     b.Property<float>("ItemLevel");
 

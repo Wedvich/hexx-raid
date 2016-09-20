@@ -27,5 +27,6 @@ namespace hexx_raid.Model
         public string PrimarySpec { get; set; }
         public string OffSpecs { get; set; }
         public bool IsMain { get; set; }
+        public CharacterAudit Audit { get; set; }
     }
 }

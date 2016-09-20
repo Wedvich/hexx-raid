@@ -1,2 +1,2 @@
 # hexx-raid
-Hexx Raid Calendar
+Hexx - Raid Planner

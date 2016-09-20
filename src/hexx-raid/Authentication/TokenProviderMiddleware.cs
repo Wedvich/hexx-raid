@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using NuGet.Packaging;
 
 namespace hexx_raid.Authentication
 {
@@ -68,12 +69,20 @@ namespace hexx_raid.Authentication
                 return;
             }
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, now.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
+
+            if (user.IsManagement)
+            {
+                claims.AddRange(new [] {
+                    new Claim(ClaimTypes.Permissions, Permissions.Audit.View),
+                    new Claim(ClaimTypes.Permissions, Permissions.Audit.Refresh)
+                });
+            }
 
             var jwt = new JwtSecurityToken(
                 issuer: _options.Issuer,
@@ -91,14 +100,11 @@ namespace hexx_raid.Authentication
             };
 
             context.Response.ContentType = "application/json";
-            await
-                context.Response.WriteAsync(JsonConvert.SerializeObject(response,
-                    new JsonSerializerSettings {Formatting = Formatting.Indented}));
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings {Formatting = Formatting.Indented}));
         }
 
         private async Task<User> GenerateTokenFromSso(HttpContext context, DateTimeOffset now, string ssoToken)
         {
-
             var decodedSsoToken = _options.SsoTokenDecoder.Decode(ssoToken);
             if (decodedSsoToken.Expiry < now)
             {

@@ -1,6 +1,7 @@
 import moment from 'moment';
-import * as actionTypes from './actionTypes';
 import { List } from 'immutable';
+
+import * as actionTypes from './actionTypes';
 
 const initialState = {
   isLoading: false,

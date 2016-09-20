@@ -1,6 +1,6 @@
-import App from '../app';
+import App from './app';
 import Raids from '../raids';
-import Characters from '../characters';
+import { Audit, Characters } from '../characters';
 import { SignIn } from '../auth';
 
 export default {
@@ -11,6 +11,7 @@ export default {
     childRoutes: [
       { path: '/raids', component: Raids },
       { path: '/characters', component: Characters },
+      { path: '/audit', component: Audit },
       { path: '/signin', component: SignIn }
     ]
   }]

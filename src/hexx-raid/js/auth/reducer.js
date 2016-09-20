@@ -4,6 +4,7 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   accessToken: null,
   expiration: null,
+  permissions: null,
   userId: null,
   isSigningIn: false
 };
@@ -16,20 +17,24 @@ export default function(state = initialState, action) {
         isSigningIn: true
       };
 
-    case actionTypes.AUTH_SIGN_IN_SUCCESS:
+    case actionTypes.AUTH_SIGN_IN_SUCCESS: {
+      const payload = JSON.parse(atob(action.accessToken.split('.')[1]));
       return {
         ...state,
         accessToken: action.accessToken,
         expiration: action.expiration,
-        userId: parseInt(JSON.parse(atob(action.accessToken.split('.')[1])).sub),
+        permissions: payload.permissions || [],
+        userId: parseInt(payload.sub),
         isSigningIn: false
       };
+    }
 
     case actionTypes.AUTH_SIGN_IN_FAILURE:
       return {
         ...state,
         accessToken: null,
         expiration: null,
+        permissions: null,
         userId: null,
         isSigningIn: false
       };
