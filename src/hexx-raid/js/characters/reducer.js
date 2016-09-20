@@ -21,14 +21,14 @@ export default function(state = initialState, action) {
     case actionTypes.CHARACTERS_LOAD_SUCCESS:
       const lastRefreshed = action.characters.reduce((last, character) => {
         if (character.audit) {
-          const refreshed = moment(character.audit.lastUpdated);
+          const refreshed = moment(character.audit.lastRefreshed);
           if (refreshed > last) {
             last = refreshed;
           }
         }
         return last;
       }, null);
-    
+
       return {
         ...state,
         isLoading: false,
@@ -51,8 +51,7 @@ export default function(state = initialState, action) {
     case actionTypes.AUDIT_REFRESH_SUCCESS:
       return {
         ...state,
-        isRefreshingAudit: false,
-        lastRefreshed: moment().toISOString()
+        isRefreshingAudit: false
       };
 
     case actionTypes.AUDIT_REFRESH_FAILURE:

@@ -35,7 +35,12 @@ class Audit extends Component {
           <thead>
             <tr>
               <th>Character</th>
-              <th>Ilvl</th>
+              <th title="Item Level (Equipped)">Ilvl</th>
+              <th title="Neck Enchant">N</th>
+              <th title="Cloak Enchant">C</th>
+              <th title="Ring1 Enchant">R1</th>
+              <th title="Ring 2 Enchant">R2</th>
+              <th title="Sockets">Sockets</th>
               <th width="100%"></th>
             </tr>
           </thead>

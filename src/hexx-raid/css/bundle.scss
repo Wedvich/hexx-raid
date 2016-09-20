@@ -9,6 +9,7 @@ $comingColor2: #107d59;
 $maybeColor: #606d8a;
 $maybeColor2: #a3b0cc;
 $maybeColor3: #3d4557;
+$maybeColor4: #ffbd16;
 $notComingColor: #e64759;
 $notComingColor2: #802832;
 
@@ -184,6 +185,8 @@ nav {
 }
 
 #sign-in {
+  padding: 20px 0;
+
   span,
   label,
   input {
@@ -298,6 +301,14 @@ nav {
     box-sizing: border-box;
     padding: 0 5px;
     width: 25%;
+
+    &:first-of-type {
+      padding-left: 0;
+    }
+
+    &:last-of-type {
+      padding-right: 0;
+    }
   }
 
   .button-group {
@@ -564,14 +575,46 @@ nav {
     text-align: left;
     white-space: nowrap;
 
-    & > span {
+    & > span,
+    & > a {
       display: inline-block;
       height: 24px;
       line-height: 24px;
+      text-decoration: none;
       vertical-align: middle;
 
       &:last-child {
         padding-right: 0;
+      }
+    }
+
+    & > a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .quality {
+    height: 24px;
+    width: 24px;
+
+    &.good {
+      background: $comingColor;
+    }
+
+    &.poor {
+      background: $maybeColor4;
+    }
+
+    &.none {
+      background: $notComingColor;
+    }
+
+    &.gem {
+      margin-right: 2px;
+      width: 12px;
+
+      &:last-of-type {
+        margin-right: 0;
       }
     }
   }

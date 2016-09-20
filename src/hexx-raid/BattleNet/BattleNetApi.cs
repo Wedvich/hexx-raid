@@ -19,12 +19,12 @@ namespace hexx_raid.BattleNet
             _httpClient = new HttpClient();
         }
 
-        public async Task<Character> GetCharacter(string realm, string name)
+        public async Task<CharacterFormat> GetCharacter(string realm, string name)
         {
-            var url = $"{string.Format(_urlFormat, $"character/{realm}/{name}")}&fields=items";
+            var url = $"{string.Format(_urlFormat, $"character/{realm}/{name}")}&fields=items,talents";
             var response = await _httpClient.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Character>(json);
+            return JsonConvert.DeserializeObject<CharacterFormat>(json);
         }
 
         public void Dispose()
