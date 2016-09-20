@@ -6,6 +6,7 @@ import Root from './root';
 import configureStore from './store';
 
 import { actions as authActions } from './auth';
+import { IS_IN_IFRAME } from './utils';
 
 const storeAndHistory = configureStore();
 
@@ -14,14 +15,7 @@ store.dispatch(authActions.sso());
 
 const appContainerElement = document.getElementById('app-container');
 
-let isInIframe;
-try {
-  isInIframe = window.self !== window.top;
-} catch (e) {
-  isInIframe = true;
-}
-
-if (isInIframe) {
+if (IS_IN_IFRAME) {
   document.body.className = 'auto-expand';
   let lastHeight = 0;
   setInterval(() => {

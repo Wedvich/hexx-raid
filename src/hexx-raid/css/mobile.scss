@@ -1,4 +1,19 @@
-@media all and (max-device-width: 480px) {
+.mobile-only {
+  display: none !important;
+
+  .button-group {
+    width: 100%;
+
+    button {
+      font-size: 3em;
+      line-height: 1em;
+      padding: 0.5em;
+      width: 100%;
+    }
+  }
+}
+
+@media all and (max-width: 480px) {
   .raid {
     h1 {
       time:after {
@@ -19,5 +34,11 @@
         margin-top: 0;
       }
     }
+  }
+}
+
+@media all and (max-device-width: 480px) {
+  .mobile-only {
+    display: flex !important;
   }
 }

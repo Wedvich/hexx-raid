@@ -507,6 +507,16 @@ nav {
     font-size: 2em;
     margin-right: 10px;
   }
+
+  a {
+    color: $textColor2;
+    text-decoration: none;
+
+    &:hover {
+      color: $textColor;
+      text-decoration: underline;
+    }
+  }
 }
 
 @import './images';
