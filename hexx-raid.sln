@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "hexx-raid", "src\hexx-raid\hexx-raid.xproj", "{53A8730B-54A8-4613-9298-E9E14242C304}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "sso-token-generator", "src\sso-token-generator\sso-token-generator.xproj", "{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,11 +24,16 @@ Global
 		{53A8730B-54A8-4613-9298-E9E14242C304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53A8730B-54A8-4613-9298-E9E14242C304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53A8730B-54A8-4613-9298-E9E14242C304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{53A8730B-54A8-4613-9298-E9E14242C304} = {B8A435DF-7D67-462F-A8B6-59628FE62447}
+		{6B1773EB-07B1-43A6-BDA8-D36AE9875FAE} = {B8A435DF-7D67-462F-A8B6-59628FE62447}
 	EndGlobalSection
 EndGlobal

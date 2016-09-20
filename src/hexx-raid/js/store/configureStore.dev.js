@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistState } from 'redux-devtools';
 import { browserHistory } from 'react-router';
-import { syncHistoryWithStore } from 'react-router-redux';
+import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import DevTools from '../root/DevTools';
 import rootReducer from './rootReducer';
@@ -10,7 +10,7 @@ import rootSaga from './rootSaga';
 const sagaMiddleware = createSagaMiddleware();
 
 const enhancer = compose(
-  applyMiddleware(sagaMiddleware),
+  applyMiddleware(sagaMiddleware, routerMiddleware(browserHistory)),
   DevTools.instrument(),
   persistState(window.location.href.match(/[?&]debug_session=([^&#]+)\b/))
 );

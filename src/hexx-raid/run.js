@@ -33,7 +33,7 @@ tasks.set('dev', () => {
     },
     setup: app => {
       app.use((req, res, next) => {
-        const regex = /(\/raids|\/characters)/gi;
+        const regex = /(\/raids|\/characters|\/signin)/gi;
         req.url = req.url.replace(regex, '/');
         next();
       });

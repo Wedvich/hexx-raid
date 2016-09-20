@@ -5,7 +5,7 @@
   "scripts": {
     "build": "node run build && npm run css",
     "css": "node-sass css -o wwwroot -q",
-    "css-watch": "node-sass css -wo wwwroot",
+    "css-watch": "node-sass css -o wwwroot -w",
     "dev": "node run dev"
   },
   "devDependencies": {

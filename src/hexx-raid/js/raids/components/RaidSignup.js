@@ -1,5 +1,6 @@
 import React from 'react';
 import { classIdToName } from '../../utils';
+import Note from './Note';
 
 export default function RaidSignup(props) {
   let statusClass;
@@ -26,17 +27,10 @@ export default function RaidSignup(props) {
       break;
   }
 
-  let note;
-  if (props.userId === props.character.userId) {
-    note = props.note ? <span className="note user" title={`${props.note.text} (Click to edit)`} onClick={props.beginSettingNote}></span> : null;
-  } else {
-    note = props.note ? <span className="note" title={props.note.text}></span> : null;
-  }
-
   return <li className={`signup ${classIdToName(props.character.class)}`}>
     <span className={'spec ' + props.character.primarySpec}></span>
     <span>{props.character.name}</span>
-    {note}
+    {props.note && <Note {...props.note} />}
     <span className={`indicator ${statusClass}`} title={statusTitle}></span>
   </li>;
 }

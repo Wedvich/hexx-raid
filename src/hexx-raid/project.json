@@ -21,7 +21,8 @@
     "System.IdentityModel.Tokens.Jwt": "5.0.0",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
-    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0"
+    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
+    "MySql.Data": "7.0.5-IR21"
   },
 
   "tools": {
@@ -53,7 +54,11 @@
     "include": [
       "wwwroot",
       "web.config"
-    ]
+    ],
+    "exclude": [
+      "wwwroot/images.css",
+      "wwwroot/mobile.css"
+    ] 
   },
 
   "scripts": {

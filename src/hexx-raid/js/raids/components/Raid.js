@@ -106,6 +106,7 @@ export default class Raid extends Component {
     const rangedMaybe = ranged.filter(s => s.status === 1).length;
 
     let userSignupChoices = null;
+    let userNote = null;
     if (userSignup) {
       let userStatus, change1, change2;
       if (userSignup.status === 0) {
@@ -122,22 +123,28 @@ export default class Raid extends Component {
         change2 = <a href="javascript:void(0)" className="maybe" onClick={signUpAsMaybe}>maybe</a>;
       }
 
-      userSignupChoices = <span className="sign-links">
+      userSignupChoices = <span className="link-group">
         {`You've already signed up as ${userStatus}${this.props.isBusy ? '.' : ''}`}
         {!this.props.isBusy && ` (change to `}
         {!this.props.isBusy && change1}
         {!this.props.isBusy && ` or `}
         {!this.props.isBusy && change2}
         {!this.props.isBusy && `).`}
-        {!this.props.isBusy && !this.state.isSettingNote && ` You can also `}
-        {!this.props.isBusy && !this.state.isSettingNote && <a href="javascript:void(0)" onClick={this.beginSettingNote.bind(this)}>set a note</a>}
-        {!this.props.isBusy && !this.state.isSettingNote && `.`}
       </span>;
+
+      userNote = !this.props.isBusy && !this.state.isSettingNote ? <span className="link-group">
+        {`You can also `}
+        <a href="javascript:void(0)" onClick={this.beginSettingNote.bind(this)}>set a note</a>
+        {`.`}
+      </span> : null;
     }
 
     let i1 = 0, i2 = 0, i3 = 0, i4 = 0;
     return <div className={`raid ${raidZoneIdToName(this.props.raidZone)}`}>
-      <h1>{this.props.timestamp.format(dateFormat)}: <span className="raid-name">{raidZoneIdToName(this.props.raidZone, true)}</span></h1>
+      <h1>
+        <time className="raid-date" dateTime={this.props.timestamp.toISOString()}>{this.props.timestamp.format(dateFormat)}</time>
+        <span className="raid-name">{raidZoneIdToName(this.props.raidZone, true)}</span>
+      </h1>
       <ul className="column tanks">
         <li className="tanks-header">Tanks: {tanksComing} {tanksMaybe > 0 && <span className="maybe-count">({tanksMaybe} maybe)</span>}</li>
         {tanks.sort(sortSignups).map(s => <RaidSignup key={i1++} userId={this.props.userId} beginSettingNote={this.beginSettingNote.bind(this)} {...s} />)}
@@ -154,7 +161,7 @@ export default class Raid extends Component {
         <li className="ranged-header">Ranged: {rangedComing} {rangedMaybe > 0 && <span className="maybe-count">({rangedMaybe} maybe)</span>}</li>
         {ranged.sort(sortSignups).map(s => <RaidSignup key={i4++} userId={this.props.userId} beginSettingNote={this.beginSettingNote.bind(this)} {...s} />)}
       </ul>
-      <div className="sign-buttons">
+      <div className="button-group">
         {!userSignup && <button className="coming" disabled={this.props.isBusy} onClick={signUpAsComing}>
           <span>Coming</span>
         </button>}
@@ -164,11 +171,12 @@ export default class Raid extends Component {
         {!userSignup && <button className="maybe" disabled={this.props.isBusy} onClick={signUpAsMaybe}>
           <span>Maybe</span>
         </button>}
-        {userSignup && userSignupChoices}
+        {userSignupChoices}
+        {userNote}
       </div>
       {this.state.isSettingNote && <div className="note-editor">
         <textarea defaultValue={this.state.noteText} ref="note"></textarea>
-        <div className="sign-buttons">
+        <div className="button-group">
           <button className="coming" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, true)}>Save</button>
           <button className="maybe" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, false)}>Cancel</button>
         </div>

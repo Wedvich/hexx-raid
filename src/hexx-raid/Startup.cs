@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 
 namespace hexx_raid
 {
@@ -42,15 +44,18 @@ namespace hexx_raid
 
             Configuration = builder.Build();
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("HexxRaidDb");
-            services.AddDbContext<HexxRaidContext>(options => options.UseSqlServer(connectionString));
+            var raidDbConnectionString = Configuration.GetConnectionString("HexxRaidDb");
+            services.AddDbContext<HexxRaidContext>(options => options.UseSqlServer(raidDbConnectionString));
 
-            services.AddMvc();
+            var dbConnectionString = Configuration.GetConnectionString("HexxDb");
+            services.AddTransient(provider => new MySqlConnection(dbConnectionString));
+
+            services.AddMvc().AddJsonOptions(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
         }
-        
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole();
@@ -66,7 +71,8 @@ namespace hexx_raid
             {
                 Issuer = "hexx",
                 SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256),
-                SsoTokenDecoder = new SsoTokenDecoder(Configuration.GetValue<string>("SsoKey"))
+                SsoTokenDecoder = new SsoTokenDecoder(Configuration.GetValue<string>("SsoKey")),
+                SmfPasswordHasher = new SmfPasswordHasher()
             };
 
             app.UseMiddleware<TokenProviderMiddleware>(Options.Create(tokenProviderOptions));

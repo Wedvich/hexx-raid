@@ -20,7 +20,7 @@ namespace hexx_raid.Authentication
 
         public SsoToken Decode(string token)
         {
-           var bytes = Convert.FromBase64String(token);
+            var bytes = Convert.FromBase64String(token);
             var iv = bytes.Take(16).ToArray();
             var ciphertext = bytes.Skip(16).ToArray();
             var plaintextBytes = new byte[ciphertext.Length];

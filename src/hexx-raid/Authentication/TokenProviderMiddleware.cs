@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 
 namespace hexx_raid.Authentication
@@ -28,9 +30,9 @@ namespace hexx_raid.Authentication
             {
                 return _next(context);
             }
-            
+
             if (context.Request.Method.Equals("POST") && context.Request.HasFormContentType)
-            { 
+            {
                 return GenerateToken(context);
             }
 
@@ -40,29 +42,29 @@ namespace hexx_raid.Authentication
 
         private async Task GenerateToken(HttpContext context)
         {
-            var ssoToken = context.Request.Form["sso_token"];
-            if (string.IsNullOrEmpty(ssoToken))
-            {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("Bad request.");
-                return;
-            }
-
-            var decodedSsoToken = _options.SsoTokenDecoder.Decode(ssoToken);
+            User user = null;
             var now = DateTimeOffset.Now;
-            if (decodedSsoToken.Expiry < now)
+
+            var ssoToken = context.Request.Form["sso_token"];
+            if (!string.IsNullOrEmpty(ssoToken))
             {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("SSO token expired.");
-                return;
+                user = await GenerateTokenFromSso(context, now, ssoToken);
+            }
+            else
+            {
+                var username = context.Request.Form["username"];
+                var password = context.Request.Form["password"];
+
+                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+                {
+                    user = await GenerateTokenFromUsernamePassword(context, username, password);
+                }
             }
 
-            var dbContext = context.RequestServices.GetService<HexxRaidContext>();
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == decodedSsoToken.Id);
             if (user == null)
             {
                 context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("Invalid SSO token.");
+                await context.Response.WriteAsync("Bad request.");
                 return;
             }
 
@@ -89,7 +91,60 @@ namespace hexx_raid.Authentication
             };
 
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            await
+                context.Response.WriteAsync(JsonConvert.SerializeObject(response,
+                    new JsonSerializerSettings {Formatting = Formatting.Indented}));
+        }
+
+        private async Task<User> GenerateTokenFromSso(HttpContext context, DateTimeOffset now, string ssoToken)
+        {
+
+            var decodedSsoToken = _options.SsoTokenDecoder.Decode(ssoToken);
+            if (decodedSsoToken.Expiry < now)
+            {
+                return null;
+            }
+
+            var dbContext = context.RequestServices.GetService<HexxRaidContext>();
+            return await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == decodedSsoToken.Id);
+        }
+
+        private async Task<User> GenerateTokenFromUsernamePassword(HttpContext context, string username, string password)
+        {
+            var dbConnection = context.RequestServices.GetService<MySqlConnection>();
+            try
+            {
+                await dbConnection.OpenAsync();
+                var command = dbConnection.CreateCommand();
+                command.CommandText = "SELECT ID_MEMBER, passwd FROM smf_members WHERE memberName=@Username";
+                command.Parameters.AddWithValue("@Username", username);
+                var reader = command.ExecuteReader();
+                await reader.ReadAsync();
+                if (!reader.HasRows)
+                {
+                    reader.Close();
+                    return null;
+                }
+                var userId = reader["ID_MEMBER"];
+                var passwordHash = reader["passwd"] as string;
+                reader.Close();
+
+                var providedPasswordHash = _options.SmfPasswordHasher.Hash(username, password);
+                if (passwordHash != providedPasswordHash)
+                {
+                    return null;
+                }
+
+                var parsedUserId = Convert.ToInt32(userId);
+
+                var dbContext = context.RequestServices.GetService<HexxRaidContext>();
+                return await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == parsedUserId);
+            }
+            finally
+            {
+                await dbConnection.CloseAsync();
+            }
         }
     }
 }
+

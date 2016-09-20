@@ -14,6 +14,11 @@ namespace hexx_raid
                 .ToArray();
         }
 
+        public static string BytesToHex(byte[] bytes)
+        {
+            return string.Join(string.Empty, bytes.Select(b => b.ToString("x2")));
+        }
+
         public static int GetUserId(this ClaimsPrincipal principal)
         {
             var userIdClaim = principal.Claims.FirstOrDefault(claim => claim.Properties.Any(p => p.Value == JwtRegisteredClaimNames.Sub));

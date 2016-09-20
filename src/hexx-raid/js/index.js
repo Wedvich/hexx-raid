@@ -14,13 +14,25 @@ store.dispatch(authActions.sso());
 
 const appContainerElement = document.getElementById('app-container');
 
-let lastHeight = 0;
-setInterval(() => {
-  if (appContainerElement.clientHeight !== lastHeight) {
-    lastHeight = appContainerElement.clientHeight;
-    window.parent.postMessage({ message: 'SET_IFRAME_HEIGHT', height: lastHeight }, '*');
-  }
-}, 300);
+let isInIframe;
+try {
+  isInIframe = window.self !== window.top;
+} catch (e) {
+  isInIframe = true;
+}
+
+if (isInIframe) {
+  document.body.className = 'auto-expand';
+  let lastHeight = 0;
+  setInterval(() => {
+    if (appContainerElement.clientHeight !== lastHeight) {
+      lastHeight = appContainerElement.clientHeight;
+      window.parent.postMessage({ message: 'SET_IFRAME_HEIGHT', height: lastHeight }, '*');
+    }
+  }, 300);
+}
+
+
 
 ReactDOM.render(
   <Root {...storeAndHistory} />,

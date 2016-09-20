@@ -1,0 +1,23 @@
+@media all and (max-device-width: 480px) {
+  .raid {
+    h1 {
+      time:after {
+        content: '';
+      }
+
+      .raid-name {
+        display: block;
+        padding-top: 5px;
+      }
+    }
+
+    .column {
+      margin-top: 20px;
+      width: 100%;
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+  }
+}

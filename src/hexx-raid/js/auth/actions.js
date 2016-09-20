@@ -8,6 +8,15 @@ export function sso() {
   };
 }
 
+export function manual(username, password) {
+  return {
+    type: actionTypes.AUTH_SIGN_IN_REQUEST,
+    username,
+    password,
+    sso: false
+  };
+}
+
 export function signIn(accessToken, expiration) {
   return {
     type: actionTypes.AUTH_SIGN_IN_SUCCESS,
