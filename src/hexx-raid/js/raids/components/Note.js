@@ -27,7 +27,9 @@ export default class Note extends Component {
     const boundingRect = element.getBoundingClientRect();
     const center = window.innerWidth / 2;
     const positionRelativeToCenter = boundingRect.left - center;
-    const width = Math.max(this.state.width, Math.min(300, boundingRect.left - 5));
+
+    const maxWidth = Math.min(defaultWidth, element.getElementsByClassName('text')[0].offsetWidth + 53);
+    const width = Math.min(maxWidth, boundingRect.left - 5);
 
     if (this.state.positionRelativeToCenter !== positionRelativeToCenter) {
       this.setState({
@@ -46,9 +48,9 @@ export default class Note extends Component {
                  onMouseLeave={this.toggleTooltip.bind(this, false)}
                  onClick={this.toggleTooltip.bind(this, null)}
                  ref={this.updatePositionRelativeToCenter.bind(this)}>
-      <span className="tooltip" style={{ maxWidth: this.state.width }}>
+      <span className="tooltip" style={{ width: this.state.width }}>
         <span className="icon"></span>
-        {this.props.text}
+        <span className="text">{this.props.text}</span>
       </span>
     </span>;
   }
