@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 
+const defaultWidth = 300;
+
 export default class Note extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showTooltip: false,
-      positionRelativeToCenter: 0
+      positionRelativeToCenter: 0,
+      width: defaultWidth
     };
   }
 
@@ -20,11 +23,17 @@ export default class Note extends Component {
     if (!element) {
       return;
     }
-    const positionRelativeToCenter = element.getBoundingClientRect().left - window.innerWidth / 2;
+
+    const boundingRect = element.getBoundingClientRect();
+    const center = window.innerWidth / 2;
+    const positionRelativeToCenter = boundingRect.left - center;
+    const width = Math.max(this.state.width, Math.min(300, boundingRect.left - 5));
+
     if (this.state.positionRelativeToCenter !== positionRelativeToCenter) {
       this.setState({
         ...this.state,
-        positionRelativeToCenter
+        positionRelativeToCenter,
+        width
       });
     }
   }
@@ -37,7 +46,7 @@ export default class Note extends Component {
                  onMouseLeave={this.toggleTooltip.bind(this, false)}
                  onClick={this.toggleTooltip.bind(this, null)}
                  ref={this.updatePositionRelativeToCenter.bind(this)}>
-      <span className="tooltip">
+      <span className="tooltip" style={{ width: this.state.width }}>
         <span className="icon"></span>
         {this.props.text}
       </span>

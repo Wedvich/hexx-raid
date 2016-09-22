@@ -20,11 +20,12 @@ namespace hexx_raid.Controllers
 
         public IEnumerable<Raid> GetAll()
         {
+            var now = DateTimeOffset.UtcNow;
             return _context.Raids
                 .Include(r => r.Signups).ThenInclude(s => s.Character)
                 .Include(r => r.Signups).ThenInclude(s => s.Note)
-                .Where(r => r.Timestamp > DateTimeOffset.UtcNow.AddDays(-1))
-                .OrderBy(r => r.Timestamp)
+                .Where(r => r.EndTime > now)
+                .OrderBy(r => r.StartTime)
                 .ToList();
         }
 

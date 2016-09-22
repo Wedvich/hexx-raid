@@ -136,7 +136,7 @@ namespace hexx_raid
                 _raidScheduler.IsFaulted)
             {
                 var dbContext = context.RequestServices.GetService<HexxRaidContext>();
-                var latestRaid = await dbContext.Raids.OrderBy(r => r.Timestamp).LastOrDefaultAsync();
+                var latestRaid = await dbContext.Raids.OrderBy(r => r.StartTime).LastOrDefaultAsync();
 
                 var now = DateTimeOffset.UtcNow;
 
@@ -144,7 +144,7 @@ namespace hexx_raid
                 {
                     _raidScheduler = Task.CompletedTask;
                 }
-                else if (latestRaid.Timestamp - now < TimeSpan.FromDays(7))
+                else if (latestRaid.StartTime - now < TimeSpan.FromDays(7))
                 {
                     var daysUntilWednesday = ((int)DayOfWeek.Wednesday - (int)now.DayOfWeek + 7) % 7;
                     var wednesday = now.AddDays(daysUntilWednesday);
@@ -170,19 +170,19 @@ namespace hexx_raid
                 dbContext.Raids.Add(new Raid
                 {
                     RaidZone = RaidZone.EmeraldNightmare,
-                    Timestamp = fridayTimestamp
+                    StartTime = fridayTimestamp
                 });
 
                 dbContext.Raids.Add(new Raid
                 {
                     RaidZone = RaidZone.EmeraldNightmare,
-                    Timestamp = sundayTimestamp
+                    StartTime = sundayTimestamp
                 });
 
                 dbContext.Raids.Add(new Raid
                 {
                     RaidZone = RaidZone.EmeraldNightmare,
-                    Timestamp = tuesdayTimestamp
+                    StartTime = tuesdayTimestamp
                 });
 
                 await dbContext.SaveChangesAsync();

@@ -3,6 +3,7 @@ import { constants as characterConstants, specToRole } from '../../utils';
 import * as constants from '../constants';
 import { raidZoneIdToName } from '../utils';
 import RaidSignup from './RaidSignup';
+import { permissions } from '../../auth';
 
 const dateFormat = 'dddd, D MMMM YYYY';
 
@@ -139,10 +140,12 @@ export default class Raid extends Component {
       </span> : null;
     }
 
+    const canSignup = this.context.hasPermission(permissions.AUTH_PERMISSION_RAIDS_SIGNUP);
+
     let i1 = 0, i2 = 0, i3 = 0, i4 = 0;
     return <div className={`raid ${raidZoneIdToName(this.props.raidZone)}`}>
       <h1>
-        <time className="raid-date" dateTime={this.props.timestamp.toISOString()}>{this.props.timestamp.format(dateFormat)}</time>
+        <time className="raid-date" dateTime={this.props.startTime.toISOString()}>{this.props.startTime.format(dateFormat)}</time>
         <span className="raid-name">{raidZoneIdToName(this.props.raidZone, true)}</span>
       </h1>
       <ul className="column tanks">
@@ -161,7 +164,7 @@ export default class Raid extends Component {
         <li className="ranged-header">Ranged: {rangedComing} {rangedMaybe > 0 && <span className="maybe-count">({rangedMaybe} maybe)</span>}</li>
         {ranged.sort(sortSignups).map(s => <RaidSignup key={i4++} userId={this.props.userId} beginSettingNote={this.beginSettingNote.bind(this)} {...s} />)}
       </ul>
-      <div className="button-group">
+      {canSignup &&<div className="button-group">
         {!userSignup && <button className="coming" disabled={this.props.isBusy} onClick={signUpAsComing}>
           <span>Coming</span>
         </button>}
@@ -173,8 +176,8 @@ export default class Raid extends Component {
         </button>}
         {userSignupChoices}
         {userNote}
-      </div>
-      {this.state.isSettingNote && <div className="note-editor">
+      </div>}
+      {canSignup && this.state.isSettingNote && <div className="note-editor">
         <textarea defaultValue={this.state.noteText} ref="note"></textarea>
         <div className="button-group">
           <button className="coming" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, true)}>Save</button>
@@ -185,8 +188,13 @@ export default class Raid extends Component {
   }
 }
 
+Raid.contextTypes = {
+  hasPermission: PropTypes.func.isRequired
+};
+
 Raid.propTypes = {
-  timestamp: PropTypes.object.isRequired,
+  startTime: PropTypes.object.isRequired,
+  endTime: PropTypes.object.isRequired,
   signups: PropTypes.array.isRequired,
   updateSignup: PropTypes.func.isRequired,
   userId: PropTypes.number

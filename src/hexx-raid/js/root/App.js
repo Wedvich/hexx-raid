@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 
@@ -8,6 +8,12 @@ import { permissions } from '../auth';
 class App extends Component {
   hasPermission(permission) {
     return permissions.hasPermission(this.props.permissions, permission);
+  }
+
+  getChildContext() {
+    return {
+      hasPermission: this.hasPermission.bind(this)
+    };
   }
 
   render() {
@@ -27,6 +33,10 @@ class App extends Component {
     </div>;
   }
 }
+
+App.childContextTypes = {
+  hasPermission: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
   permissions: state.auth.permissions

@@ -1,11 +1,11 @@
 ﻿using System;
+using hexx_raid.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using hexx_raid.Model;
 
-namespace hexxraid.Migrations
+namespace hexx_raid.Migrations
 {
     [DbContext(typeof(HexxRaidContext))]
     [Migration("20160911184836_UserMigration")]

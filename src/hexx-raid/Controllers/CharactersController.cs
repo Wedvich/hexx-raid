@@ -8,7 +8,6 @@ using hexx_raid.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Character = hexx_raid.Model.Character;
 
 namespace hexx_raid.Controllers
 {

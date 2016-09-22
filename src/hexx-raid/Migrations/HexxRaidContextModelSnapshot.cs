@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using hexx_raid.Model;
 
-namespace hexxraid.Migrations
+namespace hexx_raid.Migrations
 {
     [DbContext(typeof(HexxRaidContext))]
     partial class HexxRaidContextModelSnapshot : ModelSnapshot
@@ -13,7 +13,7 @@ namespace hexxraid.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
+                .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("hexx_raid.Model.Character", b =>
@@ -104,9 +104,11 @@ namespace hexxraid.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("newsequentialid()");
 
+                    b.Property<DateTimeOffset>("EndTime");
+
                     b.Property<int>("RaidZone");
 
-                    b.Property<DateTimeOffset>("Timestamp");
+                    b.Property<DateTimeOffset>("StartTime");
 
                     b.HasKey("RaidId");
 

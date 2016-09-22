@@ -9,7 +9,7 @@ function loadRaids(accessToken) {
   return fetch('/api/raids', { headers: { 'Authorization': `Bearer ${accessToken}` }})
     .then(response => response.json())
     .then(
-      raids => ({ raids: raids.map(r => ({ ...r, timestamp: moment(r.timestamp) })) }),
+      raids => ({ raids: raids.map(r => ({ ...r, startTime: moment(r.startTime), endTime: moment(r.endTime) })) }),
       error => ({ error: error.message || 'Something went wrong' })
     );
 }
@@ -28,7 +28,7 @@ function updateRaid(accessToken, raidId, status, note) {
   })
     .then(response => response.json())
     .then(
-      raid => ({ raid: { ...raid, timestamp: moment(raid.timestamp) }}),
+      raid => ({ raid: { ...raid, startTime: moment(r.startTime), endTime: moment(r.endTime) }}),
       error => ({ error: error.message || 'Something went wrong' })
     );
 }

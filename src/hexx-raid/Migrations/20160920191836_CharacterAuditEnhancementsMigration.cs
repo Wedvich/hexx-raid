@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using hexx_raid.Model;
+﻿using hexx_raid.Model;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace hexxraid.Migrations
+namespace hexx_raid.Migrations
 {
     public partial class CharacterAuditEnhancementsMigration : Migration
     {

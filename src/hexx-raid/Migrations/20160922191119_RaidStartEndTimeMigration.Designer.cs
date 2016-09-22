@@ -1,20 +1,20 @@
 ﻿using System;
-using hexx_raid.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using hexx_raid.Model;
 
 namespace hexx_raid.Migrations
 {
     [DbContext(typeof(HexxRaidContext))]
-    [Migration("20160917115635_PrimaryCharacterMigration")]
-    partial class PrimaryCharacterMigration
+    [Migration("20160922191119_RaidStartEndTimeMigration")]
+    partial class RaidStartEndTimeMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
+                .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("hexx_raid.Model.Character", b =>
@@ -24,6 +24,8 @@ namespace hexx_raid.Migrations
                         .HasDefaultValueSql("newsequentialid()");
 
                     b.Property<int>("Class");
+
+                    b.Property<bool>("IsMain");
 
                     b.Property<string>("Name");
 
@@ -35,10 +37,41 @@ namespace hexx_raid.Migrations
 
                     b.HasKey("CharacterId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Characters");
+                });
+
+            modelBuilder.Entity("hexx_raid.Model.CharacterAudit", b =>
+                {
+                    b.Property<Guid>("CharacterAuditId")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValueSql("newsequentialid()");
+
+                    b.Property<Guid>("CharacterId");
+
+                    b.Property<int>("CloakEnchant");
+
+                    b.Property<string>("Gems");
+
+                    b.Property<bool>("IsInPrimarySpec");
+
+                    b.Property<float>("ItemLevel");
+
+                    b.Property<DateTimeOffset>("LastRefreshed");
+
+                    b.Property<int>("NeckEnchant");
+
+                    b.Property<int>("Ring1Enchant");
+
+                    b.Property<int>("Ring2Enchant");
+
+                    b.HasKey("CharacterAuditId");
+
+                    b.HasIndex("CharacterId")
+                        .IsUnique();
+
+                    b.ToTable("CharacterAudits");
                 });
 
             modelBuilder.Entity("hexx_raid.Model.Note", b =>
@@ -72,9 +105,11 @@ namespace hexx_raid.Migrations
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("newsequentialid()");
 
+                    b.Property<DateTimeOffset>("EndTime");
+
                     b.Property<int>("RaidZone");
 
-                    b.Property<DateTimeOffset>("Timestamp");
+                    b.Property<DateTimeOffset>("StartTime");
 
                     b.HasKey("RaidId");
 
@@ -93,7 +128,7 @@ namespace hexx_raid.Migrations
 
                     b.Property<Guid?>("RaidId");
 
-                    b.Property<int?>("Status");
+                    b.Property<int>("Status");
 
                     b.Property<DateTimeOffset>("Timestamp");
 
@@ -115,6 +150,8 @@ namespace hexx_raid.Migrations
 
                     b.Property<bool>("IsManagement");
 
+                    b.Property<bool>("IsRaider");
+
                     b.Property<string>("Name");
 
                     b.HasKey("UserId");
@@ -125,8 +162,16 @@ namespace hexx_raid.Migrations
             modelBuilder.Entity("hexx_raid.Model.Character", b =>
                 {
                     b.HasOne("hexx_raid.Model.User")
-                        .WithOne("PrimaryCharacter")
-                        .HasForeignKey("hexx_raid.Model.Character", "UserId")
+                        .WithMany("Characters")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("hexx_raid.Model.CharacterAudit", b =>
+                {
+                    b.HasOne("hexx_raid.Model.Character")
+                        .WithOne("Audit")
+                        .HasForeignKey("hexx_raid.Model.CharacterAudit", "CharacterId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

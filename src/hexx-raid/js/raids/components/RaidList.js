@@ -16,13 +16,11 @@ class RaidList extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    raids: state.raids.raids,
-    isLoading: state.raids.isLoading,
-    userId: state.auth.userId
-  };
-};
+const mapStateToProps = state => ({
+  raids: state.raids.raids,
+  isLoading: state.raids.isLoading,
+  userId: state.auth.userId
+});
 
 const mapDispatchToProps = {
   updateSignup: actions.updateSignupRequest

@@ -12,7 +12,8 @@ namespace hexx_raid.Model
     public class Raid
     {
         public Guid RaidId { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
+        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         public RaidZone RaidZone { get; set; }
         public List<Note> Notes { get; set; } = new List<Note>();
         public List<RaidSignup> Signups { get; set; } = new List<RaidSignup>();
