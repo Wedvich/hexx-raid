@@ -454,6 +454,7 @@ nav {
       text-align: left;
       top: -7px;
       visibility: hidden;
+      white-space: nowrap;
       z-index: 1;
 
       .icon {
@@ -467,7 +468,7 @@ nav {
 
     &.left .tooltip {
       left: -7px;
-      padding: 7px 7px 7px 41px;
+      padding: 7px 12px 7px 41px;
 
       .icon {
         left: 7px;
@@ -477,7 +478,7 @@ nav {
 
     &.right .tooltip {
       right: -7px;
-      padding: 7px 41px 7px 7px;
+      padding: 7px 41px 7px 12px;
 
       .icon {
         right: 7px;

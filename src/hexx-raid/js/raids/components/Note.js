@@ -46,7 +46,7 @@ export default class Note extends Component {
                  onMouseLeave={this.toggleTooltip.bind(this, false)}
                  onClick={this.toggleTooltip.bind(this, null)}
                  ref={this.updatePositionRelativeToCenter.bind(this)}>
-      <span className="tooltip" style={{ width: this.state.width }}>
+      <span className="tooltip" style={{ maxWidth: this.state.width }}>
         <span className="icon"></span>
         {this.props.text}
       </span>
