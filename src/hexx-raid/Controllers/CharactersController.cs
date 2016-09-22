@@ -26,7 +26,7 @@ namespace hexx_raid.Controllers
 
         public IEnumerable<Character> GetAll()
         {
-            IQueryable<Character> characters = _context.Characters;
+            var characters = GetRaidingCharacters();
 
             if (HttpContext.User.HasClaim(ClaimTypes.Permissions, Permissions.Audit.View))
             {
@@ -41,7 +41,7 @@ namespace hexx_raid.Controllers
         [HttpPost("audit"), Authorize(Permissions.Audit.Refresh)]
         public async Task<IActionResult> RefreshAudit()
         {
-            var characters = await _context.Characters
+            var characters = await GetRaidingCharacters()
                 .Include(c => c.Audit)
                 .ToListAsync();
 
@@ -82,6 +82,14 @@ namespace hexx_raid.Controllers
 
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        private IQueryable<Character> GetRaidingCharacters()
+        {
+            return _context.Characters
+                .Join(_context.Users, c => c.UserId, u => u.UserId, (c, u) => new { c, u })
+                .Where(t => t.u.IsRaider)
+                .Select(t => t.c);
         }
     }
 }
