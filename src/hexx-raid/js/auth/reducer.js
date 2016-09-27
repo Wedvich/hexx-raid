@@ -3,6 +3,7 @@ import * as actionTypes from './actionTypes';
 
 const initialState = {
   accessToken: null,
+  refreshToken: null,
   expiration: null,
   permissions: null,
   userId: null,
@@ -22,6 +23,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         accessToken: action.accessToken,
+        refreshToken: action.refreshToken,
         expiration: action.expiration,
         permissions: payload.permissions || [],
         userId: parseInt(payload.sub),
@@ -33,6 +35,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         accessToken: null,
+        refreshToken: null,
         expiration: null,
         permissions: null,
         userId: null,

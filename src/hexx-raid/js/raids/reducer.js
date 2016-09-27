@@ -4,7 +4,8 @@ import { List } from 'immutable';
 import * as actionTypes from './actionTypes';
 
 const initialState = {
-  isLoading: false,
+  isLoading: true,
+  hasLoadedNextWeek: false,
   raids: List([])
 };
 
@@ -18,8 +19,10 @@ export default function(state = initialState, action) {
 
     case actionTypes.RAIDS_LOAD_SUCCESS:
       return {
+        ...state,
         isLoading: false,
-        raids: List(action.raids)
+        hasLoadedNextWeek: !!action.forNextWeek,
+        raids: action.forNextWeek ? state.raids.concat(action.raids) : List(action.raids)
       };
 
     case actionTypes.RAIDS_LOAD_FAILURE:

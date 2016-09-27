@@ -20,8 +20,9 @@ namespace hexx_raid.BattleNet
         public ItemFormat Finger2 { get; set; }
         public ItemFormat Trinket1 { get; set; }
         public ItemFormat Trinket2 { get; set; }
+        public ItemFormat MainHand { get; set; }
 
-        public IEnumerable<ItemFormat> GetItems()
+        public IEnumerable<ItemFormat> GetSocketableItems()
         {
             yield return Head;
             yield return Back;

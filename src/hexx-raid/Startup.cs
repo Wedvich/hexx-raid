@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -24,9 +23,6 @@ namespace hexx_raid
     {
         private static readonly Regex ServerRoutes =
              new Regex(@"(^\/api|\.(?:js|css|map)$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static Task _raidScheduler;
-        private static volatile bool _schedulingInProgress = false;
 
         public IConfigurationRoot Configuration { get; }
 
@@ -86,11 +82,6 @@ namespace hexx_raid
             app.UseMiddleware<TokenProviderMiddleware>(Options.Create(tokenProviderOptions));
 
             app.Use(ClientRoutesMiddleware);
-            
-            if (Configuration.GetValue<bool>("EnableScheduler"))
-            {
-                app.Use(RaidSchedulerMiddleware);
-            }
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -124,73 +115,6 @@ namespace hexx_raid
             if (!ServerRoutes.IsMatch(context.Request.Path))
             {
                 context.Request.Path = "/";
-            }
-
-            await next();
-        }
-
-        private static async Task RaidSchedulerMiddleware(HttpContext context, Func<Task> next)
-        {
-            if (_raidScheduler == null ||
-                _raidScheduler.IsCanceled ||
-                _raidScheduler.IsFaulted)
-            {
-                var dbContext = context.RequestServices.GetService<HexxRaidContext>();
-                var latestRaid = await dbContext.Raids.OrderBy(r => r.StartTime).LastOrDefaultAsync();
-
-                var now = DateTimeOffset.UtcNow;
-
-                if (latestRaid == null)
-                {
-                    _raidScheduler = Task.CompletedTask;
-                }
-                else if (latestRaid.StartTime - now < TimeSpan.FromDays(7))
-                {
-                    var daysUntilWednesday = ((int)DayOfWeek.Wednesday - (int)now.DayOfWeek + 7) % 7;
-                    var wednesday = now.AddDays(daysUntilWednesday);
-                    var timeUntilWednesday = wednesday - now;
-                    _raidScheduler = Task.Run(async () =>
-                    {
-                        await Task.Delay(timeUntilWednesday);
-                    });
-                }
-            }
-            else if (_raidScheduler.IsCompleted && !_schedulingInProgress)
-            {
-                _schedulingInProgress = true;
-
-                var dbContext = context.RequestServices.GetService<HexxRaidContext>();
-                var now = DateTimeOffset.UtcNow;
-                var daysUntilFriday = ((int)DayOfWeek.Friday - (int)now.DayOfWeek + 7) % 7;
-
-                var fridayTimestamp = new DateTimeOffset(now.Year, now.Month, now.Day, 18, 15, 0, TimeSpan.Zero).AddDays(daysUntilFriday);
-                var sundayTimestamp = fridayTimestamp.AddDays(2).AddMinutes(-15);
-                var tuesdayTimestamp = sundayTimestamp.AddDays(2).AddMinutes(15);
-
-                dbContext.Raids.Add(new Raid
-                {
-                    RaidZone = RaidZone.EmeraldNightmare,
-                    StartTime = fridayTimestamp
-                });
-
-                dbContext.Raids.Add(new Raid
-                {
-                    RaidZone = RaidZone.EmeraldNightmare,
-                    StartTime = sundayTimestamp
-                });
-
-                dbContext.Raids.Add(new Raid
-                {
-                    RaidZone = RaidZone.EmeraldNightmare,
-                    StartTime = tuesdayTimestamp
-                });
-
-                await dbContext.SaveChangesAsync();
-                lock (_raidScheduler)
-                {
-                    _raidScheduler = null;
-                    _schedulingInProgress = false;
-                }
             }
 
             await next();

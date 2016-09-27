@@ -28,21 +28,21 @@
 
     .column {
       margin-top: 20px;
+      padding: 0 !important;
       width: 100%;
 
       &:first-of-type {
         margin-top: 0;
       }
     }
+  }
 
+  .raid,
+  .footer {
     button {
       display: block;
       margin-bottom: 10px;
       width: 100%;
-
-      &:last-of-type {
-        margin-bottom: 0;
-      }
     }
   }
 }

@@ -101,14 +101,14 @@ namespace hexx_raid.Authentication
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            var response = new
+            var response = new AuthTokenResponse
             {
-                access_token = encodedJwt,
-                expires_in = (int) _options.Expiration.TotalSeconds
+                AccessToken = encodedJwt,
+                ExpiresIn = (int) _options.Expiration.TotalSeconds
             };
 
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings {Formatting = Formatting.Indented}));
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(response, AuthTokenResponse.SerializerSettings));
         }
 
         private async Task<User> GenerateTokenFromSso(HttpContext context, DateTimeOffset now, string ssoToken)

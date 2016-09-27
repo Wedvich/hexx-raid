@@ -27,5 +27,14 @@ namespace hexx_raid
                 throw new ArgumentException("Principal does not contain a user ID claim", nameof(principal));
             return userId;
         }
+
+        public static DateTimeOffset GetNextWednesday(this DateTimeOffset timestamp)
+        {
+            var target = (int) DayOfWeek.Wednesday;
+            if (target <= (int) timestamp.DayOfWeek)
+                target += 7;
+
+            return timestamp.AddDays(target - (int) timestamp.DayOfWeek);
+        }
     }
 }

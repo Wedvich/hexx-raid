@@ -1,16 +1,18 @@
 import * as actionTypes from './actionTypes';
 import * as constants from './constants';
 
-export function loadRequest() {
+export function loadRequest(forNextWeek) {
   return {
-    type: actionTypes.RAIDS_LOAD_REQUEST
+    type: actionTypes.RAIDS_LOAD_REQUEST,
+    forNextWeek
   };
 }
 
-export function loadSuccess(raids) {
+export function loadSuccess(raids, forNextWeek) {
   return {
     type: actionTypes.RAIDS_LOAD_SUCCESS,
-    raids
+    raids,
+    forNextWeek
   };
 }
 

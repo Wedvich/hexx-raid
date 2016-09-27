@@ -21,10 +21,23 @@ namespace hexx_raid.Controllers
         public IEnumerable<Raid> GetAll()
         {
             var now = DateTimeOffset.UtcNow;
+
             return _context.Raids
                 .Include(r => r.Signups).ThenInclude(s => s.Character)
                 .Include(r => r.Signups).ThenInclude(s => s.Note)
-                .Where(r => r.EndTime > now)
+                .Where(r => r.EndTime > now && r.StartTime < now.GetNextWednesday())
+                .OrderBy(r => r.StartTime)
+                .ToList();
+        }
+
+        [HttpGet("next")]
+        public IEnumerable<Raid> GetNext()
+        {
+            var nextWeek = DateTimeOffset.UtcNow.GetNextWednesday();
+            return _context.Raids
+                .Include(r => r.Signups).ThenInclude(s => s.Character)
+                .Include(r => r.Signups).ThenInclude(s => s.Note)
+                .Where(r => r.EndTime > nextWeek && r.StartTime < nextWeek.GetNextWednesday())
                 .OrderBy(r => r.StartTime)
                 .ToList();
         }

@@ -17,10 +17,11 @@ export function manual(username, password) {
   };
 }
 
-export function signIn(accessToken, expiration) {
+export function signIn(accessToken, refreshToken, expiration) {
   return {
     type: actionTypes.AUTH_SIGN_IN_SUCCESS,
     accessToken,
+    refreshToken,
     expiration
   };
 }
