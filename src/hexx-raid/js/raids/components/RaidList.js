@@ -18,7 +18,9 @@ class RaidList extends Component {
       {this.props.raids.map(r => <Raid key={i++} updateSignup={updateSignup} userId={userId} {...r} />)}
       {isLoading && <div className="loader-container"><Loader /></div>}
       {!hasLoadedNextWeek && !isLoading && <div className="button-group footer">
-        <button className="maybe" onClick={this.loadNextWeek.bind(this)}>{`Load next week's raids`}</button>
+        <div className="button-wrapper">
+          <button className="maybe" onClick={this.loadNextWeek.bind(this)}>{`Load next week's raids`}</button>
+        </div>
       </div>}
     </section>;
   }

@@ -250,3 +250,4 @@ src/hexx-raid/wwwroot/bundle.js
 src/hexx-raid/wwwroot/images.css
 src/hexx-raid/wwwroot/mobile.css
 src/hexx-raid/wwwroot/bundle.js.map
+*.pubxml

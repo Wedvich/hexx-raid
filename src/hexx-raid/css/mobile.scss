@@ -41,8 +41,16 @@
   .footer {
     button {
       display: block;
-      margin-bottom: 10px;
       width: 100%;
+    }
+
+    .button-wrapper {
+      display: block;
+      margin-bottom: 10px;
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
     }
   }
 }

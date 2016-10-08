@@ -20,6 +20,8 @@ class Audit extends Component {
       lastRefreshedElement = <time dateTime={parsed.toISOString()}>{parsed.fromNow()}</time>;
     }
 
+    const audits = characters.filter(c => !!c.audit).sort(sortByName);
+
     let i = 0;
     return <section id="audit" className="page">
       {isLoading && <div className="loader-container"><Loader /></div>}
@@ -45,7 +47,7 @@ class Audit extends Component {
             </tr>
           </thead>
           <tbody>
-            {characters.sort(sortByName).map(c => <AuditRow key={i++} {...c} />)}
+            {audits.map(c => <AuditRow key={i++} {...c} />)}
           </tbody>
         </table>
       </div>}

@@ -165,23 +165,33 @@ export default class Raid extends Component {
         {ranged.sort(sortSignups).map(s => <RaidSignup key={i4++} userId={this.props.userId} beginSettingNote={this.beginSettingNote.bind(this)} {...s} />)}
       </ul>
       {canSignup &&<div className="button-group">
-        {!userSignup && <button className="coming" disabled={this.props.isBusy} onClick={signUpAsComing}>
-          <span>Coming</span>
-        </button>}
-        {!userSignup && <button className="not-coming" disabled={this.props.isBusy} onClick={signUpAsNotComing}>
-          <span>Not coming</span>
-        </button>}
-        {!userSignup && <button className="maybe" disabled={this.props.isBusy} onClick={signUpAsMaybe}>
-          <span>Maybe</span>
-        </button>}
+        {!userSignup && <div className="button-wrapper">
+          <button className="coming" disabled={this.props.isBusy} onClick={signUpAsComing}>
+            <span>Coming</span>
+          </button>
+        </div>}
+        {!userSignup && <div className="button-wrapper">
+          <button className="not-coming" disabled={this.props.isBusy} onClick={signUpAsNotComing}>
+            <span>Not coming</span>
+          </button>
+        </div>}
+        {!userSignup && <div className="button-wrapper">
+          <button className="maybe" disabled={this.props.isBusy} onClick={signUpAsMaybe}>
+            <span>Maybe</span>
+          </button>
+        </div>}
         {userSignupChoices}
         {userNote}
       </div>}
       {canSignup && this.state.isSettingNote && <div className="note-editor">
         <textarea defaultValue={this.state.noteText} ref="note"></textarea>
         <div className="button-group">
-          <button className="coming" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, true)}>Save</button>
-          <button className="maybe" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, false)}>Cancel</button>
+          <div className="button-wrapper">
+            <button className="coming" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, true)}>Save</button>
+          </div>
+          <div className="button-wrapper">
+            <button className="maybe" disabled={this.props.isBusy} onClick={this.endSettingNote.bind(this, false)}>Cancel</button>
+          </div>
         </div>
       </div>}
     </div>;
