@@ -1,21 +1,28 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 import Raid from './Raid';
 import { Loader } from '../../utils';
 import * as actions from '../actions';
 
-class RaidList extends Component {
+class Raids extends Component {
 
   loadNextWeek() {
     this.props.load(true);
   }
 
   render() {
-    const { isLoading, hasLoadedNextWeek, updateSignup, userId } = this.props;
+    if (this.props.children) {
+      return <section id="raids" className="page">
+        {this.props.children}
+      </section>
+    }
+
+    const { isLoading, hasLoadedNextWeek, updateSignup, userId, navigate } = this.props;
 
     let i = 0;
     return <section id="raids" className="page">
-      {this.props.raids.map(r => <Raid key={i++} updateSignup={updateSignup} userId={userId} {...r} />)}
+      {this.props.raids.map(r => <Raid key={i++} updateSignup={updateSignup} userId={userId} navigate={navigate} {...r} />)}
       {isLoading && <div className="loader-container"><Loader /></div>}
       {!hasLoadedNextWeek && !isLoading && <div className="button-group footer">
         <div className="button-wrapper">
@@ -35,10 +42,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   updateSignup: actions.updateSignupRequest,
-  load: actions.loadRequest
+  load: actions.loadRequest,
+  navigate: push
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RaidList);
+)(Raids);

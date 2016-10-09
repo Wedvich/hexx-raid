@@ -1,10 +1,12 @@
 import reducer from './reducer';
-import RaidList from './components/RaidList';
+import RaidEditor from './components/RaidEditor';
+import Raids from './components/Raids';
 import saga from './saga';
 
 export {
+  RaidEditor,
   reducer,
   saga
 };
 
-export default RaidList;
+export default Raids;

@@ -43,3 +43,23 @@ export function updateSignupFailure(raidId) {
     type: actionTypes.RAID_UPDATE_SIGNUP_FAILURE
   };
 }
+
+export function updateRequest(raid) {
+  return {
+    type: actionTypes.RAID_UPDATE_REQUEST,
+    raid
+  };
+}
+
+export function updateSuccess(raid) {
+  return {
+    type: actionTypes.RAID_UPDATE_SUCCESS,
+    raid
+  };
+}
+
+export function updateFailure(raidId) {
+  return {
+    type: actionTypes.RAID_UPDATE_FAILURE
+  };
+}

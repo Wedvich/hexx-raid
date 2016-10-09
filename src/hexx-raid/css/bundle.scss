@@ -253,6 +253,23 @@ nav {
     }
   }
 
+  .raid-metadata {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-bottom: 20px;
+    width: 100%;
+
+    th {
+      font-weight: bold;
+      padding-right: 10px;
+      text-align: left;
+    }
+  }
+
+  h1 + .raid-metadata {
+    margin-top: -10px;
+  }
+
   ul {
     list-style: none;
     margin: 0;
@@ -445,12 +462,6 @@ nav {
     top: 5px;
     width: 24px;
 
-    &, .tooltip .icon {
-      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAhFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8g2+bRAAAALHRSTlMAAAIOFxkbHyEmMDhKT1JcYmRrc3Z8gYaTlJeZoKSpra+ys7i/wMHCw8TFy12ryoAAAAB5SURBVHgBVcpZGoIgAIDBP0mtNNsXssVCwPL+9yuFj3Seh05RqZ+qwMlsKQBEaTOA3Ao8YXNI24ggalNUAlL1JCQKA0w8wFAzHGjUeGge42HYr/2gc9nCdU6wuQHIA078utNrgOXxqd8LHM2sOa+mBPpUxwx9dvx9AdoYCe45y58sAAAAAElFTkSuQmCC');
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
     .tooltip {
       background-color: rgba(0, 0, 0, 0.9);
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
@@ -626,6 +637,26 @@ nav {
 
 .footer {
   margin-bottom: 10px;
+}
+
+.raid.editor {
+  h1 {
+    font-weight: bold;
+  }
+
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+
+  th {
+    padding-right: 10px;
+    text-align: left;
+  }
+
+  textarea {
+    width: 100%;
+  }
 }
 
 @import './images';

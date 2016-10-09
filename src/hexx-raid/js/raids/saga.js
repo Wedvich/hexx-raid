@@ -14,7 +14,7 @@ function loadRaids(accessToken, forNextWeek) {
     );
 }
 
-function updateRaid(accessToken, raidId, status, note) {
+function updateRaidSignup(accessToken, raidId, status, note) {
   return fetch(`/api/raids/${raidId}`, {
     method: 'POST',
     headers: {
@@ -46,11 +46,11 @@ function* watchLoadRaids() {
   }
 }
 
-function* watchUpdateRaid() {
+function* watchupdateRaidSignup() {
   while (true) { // eslint-disable-line
     const { raidId, status, note } = yield take(actionTypes.RAID_UPDATE_SIGNUP_REQUEST);
     const accessToken = yield select(state => state.auth.accessToken);
-    const { raid, error }  = yield call(updateRaid, accessToken, raidId, status, note);
+    const { raid, error }  = yield call(updateRaidSignup, accessToken, raidId, status, note);
     if (raid) {
       yield put(actions.updateSignupSuccess(raid));
     } else {
@@ -63,7 +63,7 @@ export default function* () {
   yield take(authActionTypes.AUTH_SIGN_IN_SUCCESS);
   yield [
     fork(watchLoadRaids),
-    fork(watchUpdateRaid)
+    fork(watchupdateRaidSignup)
   ];
   yield put(actions.loadRequest(false));
 }

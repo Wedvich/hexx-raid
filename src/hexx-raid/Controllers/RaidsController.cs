@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using hexx_raid.Authentication;
 using hexx_raid.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace hexx_raid.Controllers
             _context = context;
         }
 
+        [Authorize(Permissions.Raids.View)]
         public IEnumerable<Raid> GetAll()
         {
             var now = DateTimeOffset.UtcNow;
@@ -30,7 +32,7 @@ namespace hexx_raid.Controllers
                 .ToList();
         }
 
-        [HttpGet("next")]
+        [HttpGet("next"), Authorize(Permissions.Raids.View)]
         public IEnumerable<Raid> GetNext()
         {
             var nextWeek = DateTimeOffset.UtcNow.GetNextWednesday();
@@ -42,7 +44,7 @@ namespace hexx_raid.Controllers
                 .ToList();
         }
 
-        [HttpPost("{id:Guid}")]
+        [HttpPost("{id:Guid}"), Authorize(Permissions.Raids.Signup)]
         public IActionResult ChangeSignup(Guid id, [FromBody] dynamic body)
         {
             RaidSignupStatus status = body.status;
@@ -117,6 +119,12 @@ namespace hexx_raid.Controllers
                 .FirstOrDefault(r => r.RaidId == id);
 
             return new OkObjectResult(raid);
+        }
+
+        [HttpPut("{id:Guid}"), Authorize(Permissions.Raids.Manage)]
+        public IActionResult Update(Raid raid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

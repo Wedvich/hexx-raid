@@ -151,3 +151,11 @@
 .priest .spec.holy {
   background-position: -96px -96px;
 }
+
+.note {
+  &, .tooltip .icon {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAhFBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8g2+bRAAAALHRSTlMAAAIOFxkbHyEmMDhKT1JcYmRrc3Z8gYaTlJeZoKSpra+ys7i/wMHCw8TFy12ryoAAAAB5SURBVHgBVcpZGoIgAIDBP0mtNNsXssVCwPL+9yuFj3Seh05RqZ+qwMlsKQBEaTOA3Ao8YXNI24ggalNUAlL1JCQKA0w8wFAzHGjUeGge42HYr/2gc9nCdU6wuQHIA078utNrgOXxqd8LHM2sOa+mBPpUxwx9dvx9AdoYCe45y58sAAAAAElFTkSuQmCC');
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+}

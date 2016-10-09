@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { constants as characterConstants, specToRole } from '../../utils';
+import { Link } from 'react-router';
+import { constants as utilConstants, specToRole } from '../../utils';
 import * as constants from '../constants';
 import { raidZoneIdToName } from '../utils';
 import RaidSignup from './RaidSignup';
+import RaidMetadata from './RaidMetadata';
 import { permissions } from '../../auth';
-
-const dateFormat = 'dddd, D MMMM YYYY';
 
 function sortSignups(a, b) {
   if (a.status > b.status) {
@@ -76,19 +76,19 @@ export default class Raid extends Component {
     this.props.signups.forEach(s => {
       const role = specToRole(s.character.primarySpec, s.character.class);
       switch (role) {
-        case characterConstants.CHARACTER_ROLE_TANK:
+        case utilConstants.CHARACTER_ROLE_TANK:
           tanks.push(s);
           break;
 
-        case characterConstants.CHARACTER_ROLE_HEALER:
+        case utilConstants.CHARACTER_ROLE_HEALER:
           healers.push(s);
           break;
 
-        case characterConstants.CHARACTER_ROLE_MELEE:
+        case utilConstants.CHARACTER_ROLE_MELEE:
           melee.push(s);
           break;
 
-        case characterConstants.CHARACTER_ROLE_RANGED:
+        case utilConstants.CHARACTER_ROLE_RANGED:
           ranged.push(s);
           break;
 
@@ -141,13 +141,15 @@ export default class Raid extends Component {
     }
 
     const canSignup = this.context.hasPermission(permissions.AUTH_PERMISSION_RAIDS_SIGNUP);
+    const canManage = this.context.hasPermission(permissions.AUTH_PERMISSION_RAIDS_MANAGE);
 
     let i1 = 0, i2 = 0, i3 = 0, i4 = 0;
     return <div className={`raid ${raidZoneIdToName(this.props.raidZone)}`}>
       <h1>
-        <time className="raid-date" dateTime={this.props.startTime.toISOString()}>{this.props.startTime.format(dateFormat)}</time>
+        <time className="raid-date" dateTime={this.props.startTime.toISOString()}>{this.props.startTime.format(utilConstants.DATE_FORMAT)}</time>
         <span className="raid-name">{raidZoneIdToName(this.props.raidZone, true)}</span>
       </h1>
+      <RaidMetadata {...this.props} />
       <ul className="column tanks">
         <li className="tanks-header">Tanks: {tanksComing} {tanksMaybe > 0 && <span className="maybe-count">({tanksMaybe} maybe)</span>}</li>
         {tanks.sort(sortSignups).map(s => <RaidSignup key={i1++} userId={this.props.userId} beginSettingNote={this.beginSettingNote.bind(this)} {...s} />)}
@@ -194,6 +196,11 @@ export default class Raid extends Component {
           </div>
         </div>
       </div>}
+      {!!false && /* TODO: remove short circuit once updating works */ canManage && <div className="button-group">
+        <div className="button-wrapper">
+          <button className="maybe" onClick={() => this.props.navigate(`/raids/${this.props.raidId}`)}>Manage this raid</button>
+        </div>
+      </div>}
     </div>;
   }
 }
@@ -207,5 +214,6 @@ Raid.propTypes = {
   endTime: PropTypes.object.isRequired,
   signups: PropTypes.array.isRequired,
   updateSignup: PropTypes.func.isRequired,
-  userId: PropTypes.number
+  userId: PropTypes.number,
+  navigate: PropTypes.func.isRequired
 };

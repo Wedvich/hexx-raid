@@ -15,3 +15,6 @@ export const CHARACTER_CLASS_WARLOCK = 9;
 export const CHARACTER_CLASS_MONK = 10;
 export const CHARACTER_CLASS_DRUID = 11;
 export const CHARACTER_CLASS_DEMON_HUNTER = 12;
+
+export const DATE_FORMAT = 'dddd, D MMMM YYYY';
+export const TIME_FORMAT = 'HH:mm';

@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
+import 'moment-timezone/moment-timezone';
+moment.tz.add('Europe/Paris|CET CEST|-10 -20|01010101010101010101010|1BWp0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00|11e6');
+moment.tz.setDefault('Europe/Paris');
 
 import Root from './root';
 import configureStore from './store';

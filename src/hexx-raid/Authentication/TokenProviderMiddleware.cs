@@ -87,6 +87,7 @@ namespace hexx_raid.Authentication
             if (user.IsManagement)
             {
                 claims.AddRange(new [] {
+                    new Claim(ClaimTypes.Permissions, Permissions.Raids.Manage),
                     new Claim(ClaimTypes.Permissions, Permissions.Audit.View),
                     new Claim(ClaimTypes.Permissions, Permissions.Audit.Refresh)
                 });
