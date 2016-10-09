@@ -5,7 +5,7 @@ export default function RaidMetadata(props) {
   const plan = !props.plan ? null :
     <tr>
       <th>Plan</th>
-      <td colSpan="2">Clear Normal, then finish a bunch of fun stuff</td>
+      <td colSpan="2">{props.plan}</td>
     </tr>;
 
 

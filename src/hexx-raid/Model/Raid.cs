@@ -17,5 +17,6 @@ namespace hexx_raid.Model
         public RaidZone RaidZone { get; set; }
         public List<Note> Notes { get; set; } = new List<Note>();
         public List<RaidSignup> Signups { get; set; } = new List<RaidSignup>();
+        public string Plan { get; set; }
     }
 }

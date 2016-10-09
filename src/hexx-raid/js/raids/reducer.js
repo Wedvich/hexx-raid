@@ -55,6 +55,30 @@ export default function(state = initialState, action) {
       };
     }
 
+    case actionTypes.RAID_UPDATE_REQUEST: {
+      const raidIndex = state.raids.findIndex(r => r.raidId === action.raid.raidId);
+      return {
+        ...state,
+        raids: state.raids.update(raidIndex, r => ({ ...r, isUpdating: true }))
+      };
+    }
+
+    case actionTypes.RAID_UPDATE_SUCCESS: {
+      const raidIndex = state.raids.findIndex(r => r.raidId === action.raid.raidId);
+      return {
+        ...state,
+        raids: state.raids.update(raidIndex, r => action.raid)
+      };
+    }
+
+    case actionTypes.RAID_UPDATE_FAILURE: {
+      const raidIndex = state.raids.findIndex(r => r.raidId === action.raidId);
+      return {
+        ...state,
+        raids: state.raids.update(raidIndex, r => ({ ...r, isUpdating: false }))
+      };
+    }
+
     default:
       return state;
   }

@@ -25,8 +25,7 @@ namespace hexx_raid.Controllers
             var now = DateTimeOffset.UtcNow;
 
             return _context.Raids
-                .Include(r => r.Signups).ThenInclude(s => s.Character)
-                .Include(r => r.Signups).ThenInclude(s => s.Note)
+                .IncludeRelatedEntities()
                 .Where(r => r.EndTime > now && r.StartTime < now.GetNextWednesday())
                 .OrderBy(r => r.StartTime)
                 .ToList();
@@ -37,8 +36,7 @@ namespace hexx_raid.Controllers
         {
             var nextWeek = DateTimeOffset.UtcNow.GetNextWednesday();
             return _context.Raids
-                .Include(r => r.Signups).ThenInclude(s => s.Character)
-                .Include(r => r.Signups).ThenInclude(s => s.Note)
+                .IncludeRelatedEntities()
                 .Where(r => r.EndTime > nextWeek && r.StartTime < nextWeek.GetNextWednesday())
                 .OrderBy(r => r.StartTime)
                 .ToList();
@@ -56,7 +54,9 @@ namespace hexx_raid.Controllers
                 .FirstOrDefault(r => r.RaidId == id);
 
             if (raid == null)
+            { 
                 return new NotFoundResult();
+            }
 
             var userId = HttpContext.User.GetUserId();
 
@@ -114,17 +114,29 @@ namespace hexx_raid.Controllers
             }
 
             raid = _context.Raids
-                .Include(r => r.Signups).ThenInclude(s => s.Character)
-                .Include(r => r.Signups).ThenInclude(s => s.Note)
+                .IncludeRelatedEntities()
                 .FirstOrDefault(r => r.RaidId == id);
 
             return new OkObjectResult(raid);
         }
 
         [HttpPut("{id:Guid}"), Authorize(Permissions.Raids.Manage)]
-        public IActionResult Update(Raid raid)
+        public IActionResult Update([FromBody] Raid raid)
         {
-            throw new NotImplementedException();
+            var existingRaid = _context.Raids
+                .IncludeRelatedEntities()
+                .FirstOrDefault(r => r.RaidId == raid.RaidId);
+
+            if (existingRaid == null)
+            {
+                return new NotFoundResult();
+            }
+
+            existingRaid.RaidZone = raid.RaidZone;
+            existingRaid.Plan = raid.Plan;
+
+            _context.SaveChanges();
+            return new OkObjectResult(existingRaid);
         }
     }
 }

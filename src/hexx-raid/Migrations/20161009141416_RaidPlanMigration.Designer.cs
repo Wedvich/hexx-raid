@@ -8,9 +8,10 @@ using hexx_raid.Model;
 namespace hexx_raid.Migrations
 {
     [DbContext(typeof(HexxRaidContext))]
-    partial class HexxRaidContextModelSnapshot : ModelSnapshot
+    [Migration("20161009141416_RaidPlanMigration")]
+    partial class RaidPlanMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")

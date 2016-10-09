@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { constants as utilConstants } from '../../utils';
+import { constants as utilConstants, Loader } from '../../utils';
+import * as actions from '../actions';
 
 class RaidEditor extends Component {
+
+  update() {
+    const updatedRaid = {
+      ...this.props.raid,
+      raidZone: this.refs.raidZone.value,
+      plan: this.refs.plan.value
+    };
+
+    this.props.updateRequest(updatedRaid);
+  }
+
   render() {
-    const { raid, push } = this.props;
+    const { raid, navigate } = this.props;
 
     return <div className="raid editor">
       <h1>Managing raid</h1>
@@ -18,7 +30,7 @@ class RaidEditor extends Component {
           <tr>
             <th>Zone</th>
             <td>
-              <select>
+              <select ref="raidZone" defaultValue={raid.raidZone}>
                 <option value="8026">The Emerald Dream</option>
                 <option value="8025">The Nighthold</option>
               </select>
@@ -27,17 +39,20 @@ class RaidEditor extends Component {
           </tr>
           <tr>
             <th>Plan</th>
-            <td colSpan="2"><textarea></textarea></td>
+            <td colSpan="2">
+              <textarea ref="plan" defaultValue={raid.plan}></textarea>
+            </td>
           </tr>
         </tbody>
       </table>
       <div className="button-group">
-        <div className="button-wrapper">
-          <button className="coming">Save changes</button>
-        </div>
-        <div className="button-wrapper">
-          <button className="maybe" onClick={() => push('/raids')}>Cancel</button>
-        </div>
+        {!raid.isUpdating && <div className="button-wrapper">
+          <button className="coming" onClick={() => this.update()}>Save changes</button>
+        </div>}
+        {!raid.isUpdating && <div className="button-wrapper">
+          <button className="maybe" onClick={() => navigate('/raids')}>Cancel</button>
+        </div>}
+        {raid.isUpdating && <Loader />}
       </div>
     </div>;
   }
@@ -48,7 +63,8 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = {
-  push: push
+  navigate: push,
+  updateRequest: actions.updateRequest
 };
 
 export default connect(

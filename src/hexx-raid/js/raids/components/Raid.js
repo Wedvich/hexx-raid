@@ -196,7 +196,7 @@ export default class Raid extends Component {
           </div>
         </div>
       </div>}
-      {!!false && /* TODO: remove short circuit once updating works */ canManage && <div className="button-group">
+      {canManage && <div className="button-group">
         <div className="button-wrapper">
           <button className="maybe" onClick={() => this.props.navigate(`/raids/${this.props.raidId}`)}>Manage this raid</button>
         </div>

@@ -1,4 +1,5 @@
 import { call, take, select, put, fork } from 'redux-saga/effects';
+import { push } from 'react-router-redux';
 import moment from 'moment';
 
 import * as actions from './actions';
@@ -33,6 +34,22 @@ function updateRaidSignup(accessToken, raidId, status, note) {
     );
 }
 
+function updateRaid(accessToken, raid) {
+  return fetch(`/api/raids/${raid.raidId}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(raid)
+  })
+    .then(response => response.json())
+    .then(
+      raid => ({ raid: { ...raid, startTime: moment(raid.startTime), endTime: moment(raid.endTime) }}),
+      error => ({ error: error.message || 'Something went wrong' })
+    );
+}
+
 function* watchLoadRaids() {
   while (true) { // eslint-disable-line
     const { forNextWeek } = yield take(actionTypes.RAIDS_LOAD_REQUEST);
@@ -46,7 +63,7 @@ function* watchLoadRaids() {
   }
 }
 
-function* watchupdateRaidSignup() {
+function* watchUpdateRaidSignup() {
   while (true) { // eslint-disable-line
     const { raidId, status, note } = yield take(actionTypes.RAID_UPDATE_SIGNUP_REQUEST);
     const accessToken = yield select(state => state.auth.accessToken);
@@ -54,7 +71,21 @@ function* watchupdateRaidSignup() {
     if (raid) {
       yield put(actions.updateSignupSuccess(raid));
     } else {
-      yield put(actions.updateSignupFailure(error));
+      yield put(actions.updateSignupFailure(error, raidId));
+    }
+  }
+}
+
+function* watchUpdateRaid() {
+  while(true) {
+    const { raid } = yield take(actionTypes.RAID_UPDATE_REQUEST);
+    const accessToken = yield select(state => state.auth.accessToken);
+    const { raid: updatedRaid, error } =  yield call(updateRaid, accessToken, raid);
+    if (updatedRaid) {
+      yield put(actions.updateSuccess(updatedRaid));
+      yield put(push('/raids'));
+    } else {
+      yield put(actions.updateFailure(error, raid.raidId));
     }
   }
 }
@@ -63,7 +94,8 @@ export default function* () {
   yield take(authActionTypes.AUTH_SIGN_IN_SUCCESS);
   yield [
     fork(watchLoadRaids),
-    fork(watchupdateRaidSignup)
+    fork(watchUpdateRaid),
+    fork(watchUpdateRaidSignup)
   ];
   yield put(actions.loadRequest(false));
 }

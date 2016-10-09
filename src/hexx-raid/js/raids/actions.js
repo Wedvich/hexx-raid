@@ -38,9 +38,11 @@ export function updateSignupSuccess(raid) {
   };
 }
 
-export function updateSignupFailure(raidId) {
+export function updateSignupFailure(error, raidId) {
   return {
-    type: actionTypes.RAID_UPDATE_SIGNUP_FAILURE
+    type: actionTypes.RAID_UPDATE_SIGNUP_FAILURE,
+    error,
+    raidId
   };
 }
 
@@ -58,8 +60,10 @@ export function updateSuccess(raid) {
   };
 }
 
-export function updateFailure(raidId) {
+export function updateFailure(error, raidId) {
   return {
-    type: actionTypes.RAID_UPDATE_FAILURE
+    type: actionTypes.RAID_UPDATE_FAILURE,
+    error,
+    raidId
   };
 }
