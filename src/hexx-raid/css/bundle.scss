@@ -136,19 +136,21 @@ nav {
       }
     }
 
-    &:hover:not(:disabled) {
-      border-bottom-width: 2px;
-      top: 1px;
-    }
-
-    &:active {
-      border-bottom-width: 0;
-      top: 3px;
-    }
-
     &:disabled {
       cursor: default;
       opacity: 0.3;
+    }
+
+    &:not(:disabled) {
+      &:hover {
+        border-bottom-width: 2px;
+        top: 1px;
+      }
+
+      &:active {
+        border-bottom-width: 0;
+        top: 3px;
+      }
     }
   }
 

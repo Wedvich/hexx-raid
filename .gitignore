@@ -252,3 +252,4 @@ src/hexx-raid/wwwroot/mobile.css
 src/hexx-raid/wwwroot/bundle.js.map
 *.pubxml
 **/PublishProfiles/
+npm-debug.log*
