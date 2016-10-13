@@ -15,7 +15,7 @@ namespace hexx_raid.Controllers
         public HomeController(IHostingEnvironment env, IConfiguration configuration)
         {
             _appInsightsInstrumentationKey = configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY");
-            _index = Path.Combine(_index, "index.html");
+            _index = Path.Combine(env.WebRootPath, "index.html");
         }
 
         public IActionResult Index()
