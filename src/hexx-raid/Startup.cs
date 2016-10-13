@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using hexx_raid.Authentication;
 using hexx_raid.BattleNet;
 using hexx_raid.Model;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,18 +18,26 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace hexx_raid
 {
     public class Startup
     {
         private static readonly Regex ServerRoutes =
-             new Regex(@"(^\/api|\.(?:js|css|map)$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"(^\/api|\.(?:js|css|map)$)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public IConfigurationRoot Configuration { get; }
 
+        private readonly TelemetryClient _telemetryClient;
+
+        private readonly Stopwatch _startupTimer;
+
         public Startup(IHostingEnvironment env)
         {
+            _startupTimer = new Stopwatch();
+            _startupTimer.Start();
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -37,13 +47,30 @@ namespace hexx_raid
             if (env.IsDevelopment())
             {
                 builder.AddUserSecrets();
+                builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
             Configuration = builder.Build();
+
+            _telemetryClient = new TelemetryClient
+            {
+                InstrumentationKey = Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY")
+            };
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.FromLogContext()
+                .WriteTo.ApplicationInsightsTraces(_telemetryClient)
+                .CreateLogger();
+
+            Log.Information("App is starting up.");
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddApplicationInsightsTelemetry(Configuration);
+
             var raidDbConnectionString = Configuration.GetConnectionString("HexxRaidDb");
             services.AddDbContext<HexxRaidContext>(options => options.UseSqlServer(raidDbConnectionString));
 
@@ -55,22 +82,41 @@ namespace hexx_raid
             var battleNetApiKey = Configuration.GetValue<string>("BattleNetApiKey");
             services.AddScoped(p => new BattleNetApi(battleNetRegion, battleNetLocale, battleNetApiKey));
 
-            services.AddMvc().AddJsonOptions(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
+            services.AddMvc()
+                .AddJsonOptions(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
             services.AddAuthorizationPolicies();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApplicationLifetime appLifetime)
         {
-            loggerFactory.AddConsole();
+            loggerFactory.AddSerilog();
+            appLifetime.ApplicationStopped.Register(_telemetryClient.Flush);
+            appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
+
+            app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SigningKey")));
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, ex.Message);
+                    throw;
+                }
+            });
 
+            var signingKey =
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SigningKey")));
             var tokenProviderOptions = new TokenProviderOptions
             {
                 Issuer = "hexx",
@@ -83,7 +129,6 @@ namespace hexx_raid
 
             app.Use(ClientRoutesMiddleware);
 
-            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -108,6 +153,9 @@ namespace hexx_raid
             });
 
             app.UseMvc();
+
+            _startupTimer.Stop();
+            Log.Information("App startup completed ({StartupTime}ms).", _startupTimer.ElapsedMilliseconds);
         }
 
         private static async Task ClientRoutesMiddleware(HttpContext context, Func<Task> next)

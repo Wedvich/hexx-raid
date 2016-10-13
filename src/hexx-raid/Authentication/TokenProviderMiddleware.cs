@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace hexx_raid.Authentication
 {
@@ -36,6 +38,8 @@ namespace hexx_raid.Authentication
                 return GenerateToken(context);
             }
 
+            Log.Debug("{Method} request with content-type {ContentType} is invalid", context.Request.Method, context.Request.ContentType);
+
             context.Response.StatusCode = 400;
             return context.Response.WriteAsync("Bad request.");
         }
@@ -48,12 +52,15 @@ namespace hexx_raid.Authentication
             var ssoToken = context.Request.Form["sso_token"];
             if (!string.IsNullOrEmpty(ssoToken))
             {
+                Log.Verbose("Finding user by SSO token");
                 user = await GenerateTokenFromSso(context, now, ssoToken);
             }
             else
             {
                 var username = context.Request.Form["username"];
                 var password = context.Request.Form["password"];
+
+                Log.Verbose("Finding user by username: {Username}", username);
 
                 if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
@@ -63,6 +70,7 @@ namespace hexx_raid.Authentication
 
             if (user == null)
             {
+                Log.Error("Unable to find a user with the provided information");
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync("Bad request.");
                 return;
@@ -129,12 +137,24 @@ namespace hexx_raid.Authentication
             var dbConnection = context.RequestServices.GetService<MySqlConnection>();
             try
             {
+                Log.Verbose("Opening connection to MySQL database {Database} on server {DataSource}.",
+                    dbConnection.Database,
+                    dbConnection.DataSource);
                 await dbConnection.OpenAsync();
                 var command = dbConnection.CreateCommand();
                 command.CommandText = "SELECT ID_MEMBER, passwd FROM smf_members WHERE memberName=@Username";
                 command.Parameters.AddWithValue("@Username", username);
+                
+                var timer = new Stopwatch();
+                timer.Start();
                 var reader = command.ExecuteReader();
                 await reader.ReadAsync();
+                timer.Stop();
+                Log.Information("Executed MySqlCommand ({ElapsedMilliseconds}ms) [CommandTimeout={CommandTimeout}] {CommandText}",
+                    timer.ElapsedMilliseconds,
+                    command.CommandTimeout,
+                    command.CommandText);
+
                 if (!reader.HasRows)
                 {
                     reader.Close();
@@ -142,6 +162,9 @@ namespace hexx_raid.Authentication
                 }
                 var userId = reader["ID_MEMBER"];
                 var passwordHash = reader["passwd"] as string;
+                Log.Verbose("Closing connection to MySQL database {Database} on server {DataSource}.",
+                    dbConnection.Database,
+                    dbConnection.DataSource);
                 reader.Close();
 
                 var providedPasswordHash = _options.SmfPasswordHasher.Hash(username, password);

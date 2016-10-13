@@ -56,7 +56,11 @@ function* watchLoadRaids() {
     const accessToken = yield select(state => state.auth.accessToken);
     const { raids, error } = yield call(loadRaids, accessToken, forNextWeek);
     if (raids) {
-      yield put(actions.loadSuccess(raids, forNextWeek));
+      if (!forNextWeek && !raids.length) {
+        yield put(actions.loadRequest(true));
+      } else {
+        yield put(actions.loadSuccess(raids, forNextWeek));
+      }
     } else {
       yield put(actions.loadFailure(error));
     }
