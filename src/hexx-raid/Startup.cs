@@ -115,6 +115,8 @@ namespace hexx_raid
                 }
             });
 
+            app.Use(HstsMiddleware);
+
             var signingKey =
                 new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SigningKey")));
             var tokenProviderOptions = new TokenProviderOptions
@@ -166,6 +168,26 @@ namespace hexx_raid
             }
 
             await next();
+        }
+
+        private static async Task HstsMiddleware(HttpContext context, Func<Task> next)
+        {
+            const int maxAge = 86400;
+
+            if (context.Request.IsHttps)
+            {
+                context.Response.OnStarting(() =>
+                {
+                    context.Response.Headers.Add("Strict-Transport-Security", $"max-age={maxAge}");
+                    return Task.FromResult(0);
+                });
+
+                await next();
+            }
+            else
+            {
+                context.Response.Redirect($"https://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}", true);
+            }
         }
     }
 }
