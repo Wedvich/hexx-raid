@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using hexx_raid.Authentication;
 using hexx_raid.BattleNet;
 using hexx_raid.Model;
+using hexx_raid.Security;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -54,7 +55,7 @@ namespace hexx_raid
 
             _telemetryClient = new TelemetryClient
             {
-                InstrumentationKey = Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY")
+                InstrumentationKey = Configuration.GetValue<string>("AppInsights:InstrumentationKey")
             };
 
             Log.Logger = new LoggerConfiguration()
@@ -69,7 +70,11 @@ namespace hexx_raid
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IConfiguration>(Configuration);
+
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            // Override the TelemetryClient added above, to ensure that it gets properly flushed to the log sink.
+            services.AddSingleton(_telemetryClient);
 
             var raidDbConnectionString = Configuration.GetConnectionString("HexxRaidDb");
             services.AddDbContext<HexxRaidContext>(options => options.UseSqlServer(raidDbConnectionString));
@@ -77,9 +82,9 @@ namespace hexx_raid
             var dbConnectionString = Configuration.GetConnectionString("HexxDb");
             services.AddTransient(provider => new MySqlConnection(dbConnectionString));
 
-            var battleNetRegion = Configuration.GetValue<string>("BattleNetRegion");
-            var battleNetLocale = Configuration.GetValue<string>("BattleNetLocale");
-            var battleNetApiKey = Configuration.GetValue<string>("BattleNetApiKey");
+            var battleNetRegion = Configuration.GetValue<string>("BattleNet:Region");
+            var battleNetLocale = Configuration.GetValue<string>("BattleNet:Locale");
+            var battleNetApiKey = Configuration.GetValue<string>("BattleNet:ApiKey");
             services.AddScoped(p => new BattleNetApi(battleNetRegion, battleNetLocale, battleNetApiKey));
 
             services.AddMvc()
@@ -88,8 +93,7 @@ namespace hexx_raid
             services.AddAuthorizationPolicies();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
-            IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             loggerFactory.AddSerilog();
             appLifetime.ApplicationStopped.Register(_telemetryClient.Flush);
@@ -102,23 +106,21 @@ namespace hexx_raid
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
+            app.UseApplicationInsightsExceptionTelemetry();
+
+            if (Configuration.GetSection("Hsts") != null)
             {
-                try
+                var hstsOptions = new HstsOptions
                 {
-                    await next();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                    throw;
-                }
-            });
+                    MaxAge = Math.Max(0, Configuration.GetValue<int>("Hsts:MaxAge")),
+                    IncludeSubdomains = Configuration.GetValue<bool>("Hsts:IncludeSubdomains"),
+                    Preload = Configuration.GetValue<bool>("Hsts:Preload")
+                };
 
-            app.Use(HstsMiddleware);
+                app.UseMiddleware<HstsMiddleware>(Options.Create(hstsOptions));
+            }
 
-            var signingKey =
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SigningKey")));
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SigningKey")));
             var tokenProviderOptions = new TokenProviderOptions
             {
                 Issuer = "hexx",
@@ -168,26 +170,6 @@ namespace hexx_raid
             }
 
             await next();
-        }
-
-        private static async Task HstsMiddleware(HttpContext context, Func<Task> next)
-        {
-            const int maxAge = 86400;
-
-            if (context.Request.IsHttps)
-            {
-                context.Response.OnStarting(() =>
-                {
-                    context.Response.Headers.Add("Strict-Transport-Security", $"max-age={maxAge}");
-                    return Task.FromResult(0);
-                });
-
-                await next();
-            }
-            else
-            {
-                context.Response.Redirect($"https://{context.Request.Host}{context.Request.Path}{context.Request.QueryString}", true);
-            }
         }
     }
 }

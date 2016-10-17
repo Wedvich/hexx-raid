@@ -5,6 +5,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using hexx_raid.Model;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,11 +21,13 @@ namespace hexx_raid.Authentication
     {
         private readonly RequestDelegate _next;
         private readonly TokenProviderOptions _options;
+        private readonly TelemetryClient _telemetryClient;
 
-        public TokenProviderMiddleware(RequestDelegate next, IOptions<TokenProviderOptions> options)
+        public TokenProviderMiddleware(RequestDelegate next, IOptions<TokenProviderOptions> options, TelemetryClient telemetryClient)
         {
             _next = next;
             _options = options.Value;
+            _telemetryClient = telemetryClient;
         }
 
         public Task Invoke(HttpContext context)
@@ -134,23 +138,41 @@ namespace hexx_raid.Authentication
 
         private async Task<User> GenerateTokenFromUsernamePassword(HttpContext context, string username, string password)
         {
+            var telemetry = new DependencyTelemetry
+            {
+                DependencyKind = "SQL",
+                DependencyTypeName = nameof(TokenProviderMiddleware)
+            };
+
+            var timer = new Stopwatch();
+
             var dbConnection = context.RequestServices.GetService<MySqlConnection>();
             try
             {
                 Log.Verbose("Opening connection to MySQL database {Database} on server {DataSource}.",
                     dbConnection.Database,
                     dbConnection.DataSource);
+
+                telemetry.Name = dbConnection.DataSource;
+
                 await dbConnection.OpenAsync();
                 var command = dbConnection.CreateCommand();
                 command.CommandText = "SELECT ID_MEMBER, passwd FROM smf_members WHERE memberName=@Username";
                 command.Parameters.AddWithValue("@Username", username);
-                
-                var timer = new Stopwatch();
+
+                telemetry.CommandName = command.CommandText;
+                telemetry.StartTime = DateTimeOffset.UtcNow;
                 timer.Start();
+
                 var reader = command.ExecuteReader();
                 await reader.ReadAsync();
+
                 timer.Stop();
-                Log.Information("Executed MySqlCommand ({ElapsedMilliseconds}ms) [CommandTimeout={CommandTimeout}] {CommandText}",
+                telemetry.Success = true;
+                telemetry.Duration = timer.Elapsed;
+
+                Log.Information(
+                    "Executed MySqlCommand ({ElapsedMilliseconds}ms) [CommandTimeout={CommandTimeout}] {CommandText}",
                     timer.ElapsedMilliseconds,
                     command.CommandTimeout,
                     command.CommandText);
@@ -162,9 +184,11 @@ namespace hexx_raid.Authentication
                 }
                 var userId = reader["ID_MEMBER"];
                 var passwordHash = reader["passwd"] as string;
+
                 Log.Verbose("Closing connection to MySQL database {Database} on server {DataSource}.",
                     dbConnection.Database,
                     dbConnection.DataSource);
+
                 reader.Close();
 
                 var providedPasswordHash = _options.SmfPasswordHasher.Hash(username, password);
@@ -178,9 +202,15 @@ namespace hexx_raid.Authentication
                 var dbContext = context.RequestServices.GetService<HexxRaidContext>();
                 return await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == parsedUserId);
             }
+            catch (Exception)
+            {
+                telemetry.Success = false;
+                throw;
+            }
             finally
             {
                 await dbConnection.CloseAsync();
+                _telemetryClient.TrackDependency(telemetry);
             }
         }
     }
