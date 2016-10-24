@@ -65,14 +65,14 @@ namespace hexx_raid.Controllers
                 }
 
                 character.Audit.ItemLevel = characterFromBattleNet.Items.AverageItemLevelEquipped;
-                character.Audit.CloakEnchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Back.TooltipParams.Enchant);
-                character.Audit.NeckEnchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Neck.TooltipParams.Enchant);
-                character.Audit.Ring1Enchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Finger1.TooltipParams.Enchant);
-                character.Audit.Ring2Enchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Finger2.TooltipParams.Enchant);
+                character.Audit.CloakEnchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Back?.TooltipParams?.Enchant);
+                character.Audit.NeckEnchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Neck?.TooltipParams?.Enchant);
+                character.Audit.Ring1Enchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Finger1?.TooltipParams?.Enchant);
+                character.Audit.Ring2Enchant = CharacterAudit.GetEnhancementQuality(characterFromBattleNet.Items.Finger2?.TooltipParams?.Enchant);
 
                 var gems = characterFromBattleNet.Items.GetSocketableItems()
-                    .Where(item => item.BonusLists.Contains(1808))
-                    .Select(item => CharacterAudit.GetEnhancementQuality(item.TooltipParams.Gem0));
+                    .Where(item => item?.BonusLists?.Contains(1808) == true)
+                    .Select(item => CharacterAudit.GetEnhancementQuality(item.TooltipParams?.Gem0));
 
                 character.Audit.SetGems(gems);
 

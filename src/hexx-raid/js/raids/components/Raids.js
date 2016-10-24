@@ -15,7 +15,7 @@ class Raids extends Component {
     if (this.props.children) {
       return <section id="raids" className="page">
         {this.props.children}
-      </section>
+      </section>;
     }
 
     const { isLoading, hasLoadedNextWeek, updateSignup, userId, navigate } = this.props;

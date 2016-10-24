@@ -6,7 +6,8 @@ namespace hexx_raid.Model
     public enum RaidZone
     {
         Nighthold = 8025,
-        EmeraldNightmare = 8026
+        EmeraldNightmare = 8026,
+        TrialOfValor = 8440
     }
 
     public class Raid

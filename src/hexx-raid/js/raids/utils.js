@@ -6,6 +6,9 @@ export function raidZoneIdToName(raidZoneId, friendly) {
     case 8026:
       return friendly ? 'The Emerald Nightmare' : 'the-emerald-nightmare';
 
+    case 8440:
+      return friendly ? 'Trial of Valor' : 'trial-of-valor';
+
     default:
       return null;
   }

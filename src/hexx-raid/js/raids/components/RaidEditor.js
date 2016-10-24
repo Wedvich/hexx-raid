@@ -32,6 +32,7 @@ class RaidEditor extends Component {
             <td>
               <select ref="raidZone" defaultValue={raid.raidZone}>
                 <option value="8026">The Emerald Dream</option>
+                <option value="8440">Trial of Valor</option>
                 <option value="8025">The Nighthold</option>
               </select>
             </td>

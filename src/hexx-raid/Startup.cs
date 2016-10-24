@@ -108,7 +108,7 @@ namespace hexx_raid
 
             app.UseApplicationInsightsExceptionTelemetry();
 
-            if (Configuration.GetSection("Hsts") != null)
+            if (Configuration.GetSection("Hsts")?.Value != null)
             {
                 var hstsOptions = new HstsOptions
                 {
