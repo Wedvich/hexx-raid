@@ -48,6 +48,7 @@ namespace hexx_raid.Model
                 case 5437:
                 case 5438:
                 case 5439:
+                case 5889:
                 case 5890:
                 case 5891:
                 case 130219:
