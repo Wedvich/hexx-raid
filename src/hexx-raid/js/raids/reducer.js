@@ -9,7 +9,7 @@ const initialState = {
   raids: List([])
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case actionTypes.RAIDS_LOAD_REQUEST:
       return {

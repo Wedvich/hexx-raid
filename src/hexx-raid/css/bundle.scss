@@ -3,6 +3,7 @@ $backgroundColor2: #3d2e27;
 $textColor: white;
 $textColor2: #f4e29d;
 $textColor3: black;
+$textColor4: #999;
 
 $comingColor: #1bc98e;
 $comingColor2: #107d59;
@@ -555,7 +556,8 @@ nav {
   width: 24px;
 }
 
-.audit-table {
+.audit-table,
+.users-table {
   background: $backgroundColor;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
   margin: 20px 0;
@@ -584,6 +586,10 @@ nav {
 
   tr {
     background: $backgroundColor2;
+
+    &.disabled {
+      color: $textColor4;
+    }
   }
 
   th,

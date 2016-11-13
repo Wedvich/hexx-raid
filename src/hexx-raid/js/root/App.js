@@ -6,9 +6,6 @@ import { IS_IN_IFRAME } from '../utils';
 import { permissions } from '../auth';
 
 class App extends Component {
-  hasPermission(permission) {
-    return permissions.hasPermission(this.props.permissions, permission);
-  }
 
   getChildContext() {
     return {
@@ -16,11 +13,16 @@ class App extends Component {
     };
   }
 
+  hasPermission(permission) {
+    return permissions.hasPermission(this.props.permissions, permission);
+  }
+
   render() {
     return <div id="app">
       <nav>
         <span><Link to="/raids" activeClassName="active">Raids</Link></span>
         {this.hasPermission(permissions.AUTH_PERMISSION_AUDIT_VIEW) && <span><Link to="/audit" activeClassName="active">Audit</Link></span>}
+        {this.hasPermission(permissions.AUTH_PERMISSION_USERS_VIEW) && <span><Link to="/users" activeClassName="active">Users</Link></span>}
       </nav>
       {IS_IN_IFRAME && <div className="announcement mobile-only">
         <span className="button-group">
@@ -36,6 +38,11 @@ class App extends Component {
 
 App.childContextTypes = {
   hasPermission: PropTypes.func.isRequired
+};
+
+App.propTypes = {
+  children: PropTypes.node.isRequired,
+  permissions: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 const mapStateToProps = state => ({

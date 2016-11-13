@@ -24,3 +24,9 @@ export default class Root extends Component {
 Root.childContextTypes = {
   appInsights: PropTypes.object
 };
+
+Root.propTypes = {
+  appInsights: PropTypes.object.isRequired,
+  store: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
+};

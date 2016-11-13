@@ -71,7 +71,7 @@ function* watchUpdateRaidSignup() {
   while (true) { // eslint-disable-line
     const { raidId, status, note } = yield take(actionTypes.RAID_UPDATE_SIGNUP_REQUEST);
     const accessToken = yield select(state => state.auth.accessToken);
-    const { raid, error }  = yield call(updateRaidSignup, accessToken, raidId, status, note);
+    const { raid, error } = yield call(updateRaidSignup, accessToken, raidId, status, note);
     if (raid) {
       yield put(actions.updateSignupSuccess(raid));
     } else {
@@ -81,10 +81,10 @@ function* watchUpdateRaidSignup() {
 }
 
 function* watchUpdateRaid() {
-  while(true) {
+  while (true) {
     const { raid } = yield take(actionTypes.RAID_UPDATE_REQUEST);
     const accessToken = yield select(state => state.auth.accessToken);
-    const { raid: updatedRaid, error } =  yield call(updateRaid, accessToken, raid);
+    const { raid: updatedRaid, error } = yield call(updateRaid, accessToken, raid);
     if (updatedRaid) {
       yield put(actions.updateSuccess(updatedRaid));
       yield put(push('/raids'));

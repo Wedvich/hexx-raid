@@ -101,7 +101,9 @@ namespace hexx_raid.Authentication
                 claims.AddRange(new [] {
                     new Claim(ClaimTypes.Permissions, Permissions.Raids.Manage),
                     new Claim(ClaimTypes.Permissions, Permissions.Audit.View),
-                    new Claim(ClaimTypes.Permissions, Permissions.Audit.Refresh)
+                    new Claim(ClaimTypes.Permissions, Permissions.Audit.Refresh),
+                    new Claim(ClaimTypes.Permissions, Permissions.Users.Manage),
+                    new Claim(ClaimTypes.Permissions, Permissions.Users.View)
                 });
             }
 
@@ -179,7 +181,7 @@ namespace hexx_raid.Authentication
 
                 if (!reader.HasRows)
                 {
-                    reader.Close();
+                    reader.Dispose();
                     return null;
                 }
                 var userId = reader["ID_MEMBER"];
@@ -189,7 +191,7 @@ namespace hexx_raid.Authentication
                     dbConnection.Database,
                     dbConnection.DataSource);
 
-                reader.Close();
+                reader.Dispose();
 
                 var providedPasswordHash = _options.SmfPasswordHasher.Hash(username, password);
                 if (passwordHash != providedPasswordHash)

@@ -6,11 +6,11 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   isLoading: false,
   isRefreshingAudit: false,
-  characters: [],
+  characters: List([]),
   lastRefreshed: null
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case actionTypes.CHARACTERS_LOAD_REQUEST:
       return {
@@ -18,7 +18,7 @@ export default function(state = initialState, action) {
         isLoading: true
       };
 
-    case actionTypes.CHARACTERS_LOAD_SUCCESS:
+    case actionTypes.CHARACTERS_LOAD_SUCCESS: {
       const lastRefreshed = action.characters.reduce((last, character) => {
         if (character.audit) {
           const refreshed = moment(character.audit.lastRefreshed);
@@ -35,6 +35,7 @@ export default function(state = initialState, action) {
         characters: List(action.characters),
         lastRefreshed: lastRefreshed ? lastRefreshed.toISOString() : null
       };
+    }
 
     case actionTypes.CHARACTERS_LOAD_FAILURE:
       return {
